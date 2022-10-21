@@ -2,11 +2,11 @@
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
-using module UniversalPackageManager
+using module AnyPackage
 using module PowerShellGet
 
 using namespace System.Collections.Generic
-using namespace UniversalPackageManager.Provider
+using namespace AnyPackage.Provider
 using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
 
 [PackageProvider('PowerShellGet')]
