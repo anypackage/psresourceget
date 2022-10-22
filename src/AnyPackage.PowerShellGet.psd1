@@ -5,17 +5,17 @@
     GUID = 'cc680200-a0c8-40df-a004-64c3899a72c9'
     Author = 'Thomas Nieto'
     Copyright = '(c) 2022 Thomas Nieto. All rights reserved.'
-    Description = 'PowerShellGet provider for UniversalPackageManager.'
+    Description = 'PowerShellGet provider for AnyPackage.'
     PowerShellVersion = '5.1'
-    RequiredModules = @('UniversalPackageManager', @{ ModuleName = 'PowerShellGet'; ModuleVersion = '3.0.17' })
+    RequiredModules = @('AnyPackage', @{ ModuleName = 'PowerShellGet'; ModuleVersion = '3.0.17' })
     FunctionsToExport = @()
     CmdletsToExport = @()
     AliasesToExport = @()
     PrivateData = @{
         PSData = @{
-            Tags = @('UniversalPackageManager', 'Provider', 'PowerShellGet')
-            LicenseUri = 'https://github.com/ThomasNieto/AnyPackage.PowerShellGet/blob/main/LICENSE'
-            ProjectUri = 'https://github.com/ThomasNieto/AnyPackage.PowerShellGet'
+            Tags = @('AnyPackage', 'Provider', 'PowerShellGet')
+            LicenseUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet/blob/main/LICENSE'
+            ProjectUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet'
         }
     }
 }
