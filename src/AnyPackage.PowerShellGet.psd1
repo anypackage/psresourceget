@@ -13,7 +13,7 @@
     AliasesToExport = @()
     PrivateData = @{
         PSData = @{
-            Tags = @('AnyPackage', 'Provider', 'PowerShellGet')
+            Tags = @('AnyPackage', 'Provider', 'PowerShellGet', 'Windows', 'Linux', 'MacOS')
             LicenseUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet/blob/main/LICENSE'
             ProjectUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet'
         }
