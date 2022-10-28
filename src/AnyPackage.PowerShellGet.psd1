@@ -18,4 +18,5 @@
             ProjectUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet'
         }
     }
+    HelpInfoUri = 'https://go.anypackage.dev/help'
 }
