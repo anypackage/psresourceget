@@ -11,8 +11,8 @@ using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
 
 [PackageProvider('PowerShellGet')]
 class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
-                              IInstallPackage, ISavePackage, IUninstallPackage,
-                              IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
+IInstallPackage, ISavePackage, IUninstallPackage,
+IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     
     PowerShellGetProvider() : base('c9a39544-274b-4935-9cad-7423e8c47e6b') { }
 
@@ -159,8 +159,11 @@ class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
 
         # Issue to get PassThru parameter added
         # https://github.com/PowerShell/PowerShellGet/issues/667
+
+        # Prerelease parameter causes it to silently fail
+        # https://github.com/PowerShell/PowerShellGet/issues/842
         try {
-            Uninstall-PSResource @params -Prerelease:$request.Prerelease -ErrorAction Stop
+            Uninstall-PSResource @params -ErrorAction Stop
         }
         catch {
             throw $_
