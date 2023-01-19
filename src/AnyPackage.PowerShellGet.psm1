@@ -95,7 +95,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         if ($request.Source) {
-            $params['Source'] = $request.Source
+            $params['Repository'] = $request.Source
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
@@ -126,7 +126,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         if ($request.Source) {
-            $params['Source'] = $request.Source
+            $params['Repository'] = $request.Source
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
@@ -194,7 +194,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         if ($request.Source) {
-            $params['Source'] = $request.Source
+            $params['Repository'] = $request.Source
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
@@ -217,7 +217,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         if ($request.Source) {
-            $params['Source'] = $request.Source
+            $params['Repository'] = $request.Source
         }
 
         try {
@@ -324,7 +324,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
         
         if ($repo) {
-            $repoInfo = $request.NewSourceInfo($repo.Name, $repo.Url, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority; CredentialInfo = $repo.CredentialInfo })
+            $repoInfo = $request.NewSourceInfo($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority; CredentialInfo = $repo.CredentialInfo })
         }
         else {
             $repoInfo = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
