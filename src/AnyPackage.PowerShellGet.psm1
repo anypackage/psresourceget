@@ -1,4 +1,4 @@
-# Copyright (c) Thomas Nieto - All Rights Reserved
+﻿# Copyright (c) Thomas Nieto - All Rights Reserved
 # You may use, distribute and modify this code under the
 # terms of the MIT license.
 
@@ -13,7 +13,7 @@ using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
 class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
 IInstallPackage, ISavePackage, IUninstallPackage,
 IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
-    
+
     PowerShellGetProvider() : base('c9a39544-274b-4935-9cad-7423e8c47e6b') { }
 
     #region GetPackage
@@ -33,7 +33,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-        
+
         try {
             $resources = Get-PSResource @params -ErrorAction Stop
         }
@@ -69,7 +69,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-        
+
         try {
             $resources = Find-PSResource @params -ErrorAction Stop
         }
@@ -99,7 +99,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-        
+
         try {
             $resources = Install-PSResource @params -ErrorAction Stop
         }
@@ -130,7 +130,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-        
+
         try {
             $resources = Save-PSResource @params -ErrorAction Stop
         }
@@ -313,16 +313,16 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
     hidden [void] ProcessResource([PSResourceInfo] $resource, [PackageRequest] $request) {
         $request.WriteVerbose("Processing '$($resource.Name)' resource.")
-            
+
         $repo = Get-PSResourceRepository -Name $resource.Repository
         $ht = ConvertTo-PackageMetadata $resource
-        
+
         $deps = [List[PackageDependency]]::new()
         foreach ($dep in $resource.Dependencies) {
             $dependency = [PackageDependency]::new($dep.Name, $dep.VersionRange)
             $deps.Add($dependency)
         }
-        
+
         if ($repo) {
             $repoInfo = $request.NewSourceInfo($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority; CredentialInfo = $repo.CredentialInfo })
         }
@@ -359,13 +359,14 @@ class FindPackageDynamicParameters {
 
 [PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
 
-$MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = { 
+$MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     [PackageProviderManager]::UnregisterProvider([PowerShellGetProvider])
 }
 
 function ConvertTo-PackageMetadata {
     [CmdletBinding()]
     [OutputType([hashtable])]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '')]
     param (
         [PSResourceInfo]
         [Parameter(Position = 0,
@@ -373,16 +374,16 @@ function ConvertTo-PackageMetadata {
             ValueFromPipelineByPropertyName)]
         $InputObject
     )
-    
+
     begin {
-        $properties = $InputObject | 
+        $properties = $InputObject |
             Get-Member -MemberType Properties |
             Select-Object -ExpandProperty Name
     }
-    
+
     process {
         $hashtable = @{}
-        
+
         foreach ($property in $properties) {
             $hashtable[$property] = $InputObject.$property
         }
