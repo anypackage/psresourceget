@@ -37,7 +37,7 @@ jobs:
 
       - name: Run PSScriptAnalyzer
         run: |
-          Import-Module AnyPackage, ConvertToSARIF, PowerShellGet
+          Import-Module AnyPackage, ConvertToSARIF, PowerShellGet -PassThru
           Invoke-ScriptAnalyzer -Path . -Recurse | ConvertTo-SARIF -FilePath results.sarif
 
       - name: Upload SARIF results file
