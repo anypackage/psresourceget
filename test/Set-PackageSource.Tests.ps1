@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Set-PackageSource {
     BeforeAll {
@@ -10,12 +10,12 @@ Describe Set-PackageSource {
     AfterAll {
         Unregister-PSResourceRepository -Name Test
     }
-    
+
     Context 'with -Uri parameter' {
         It 'should change uri' {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
 
-            $source = Set-PackageSource -Name Test -Location $path -PassThru 
+            $source = Set-PackageSource -Name Test -Location $path -PassThru
 
             $source | Should -Not -BeNullOrEmpty
             $source.Location | Should -Be ([uri]$path)
@@ -72,7 +72,7 @@ Describe Set-PackageSource {
         AfterEach {
             Set-PSResourceRepository -Name Test -Trusted:$false
         }
-        
+
         It 'should accept values from Get-PackageSource' -TestCases 'Test' {
             $source = Get-PackageSource -Name $_ |
             Set-PackageSource -Trusted -PassThru

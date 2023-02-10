@@ -1,10 +1,10 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Unregister-PackageSource {
     BeforeEach {
         $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
         New-Item -Path $path\repo -ItemType Directory -ErrorAction Ignore
-        
+
         try {
             Register-PSResourceRepository -Name Test -Uri $path\repo
         }

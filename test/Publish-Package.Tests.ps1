@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Publish-Package {
     BeforeAll {
@@ -10,7 +10,7 @@ Describe Publish-Package {
     AfterAll {
         Unregister-PSResourceRepository -Name Test
     }
-    
+
     Context 'with -Path parameter' {
         It 'should publish <_> to local repository' -TestCases 'SNMP' {
             # https://github.com/PowerShell/PowerShellGet/issues/940
@@ -18,7 +18,7 @@ Describe Publish-Package {
             Save-PSResource -Name $_ -Path $testRoot
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
-            
+
             { Publish-PSResource -Path $path -Repository Test } |
             Should -Not -Throw
         }
@@ -32,7 +32,7 @@ Describe Publish-Package {
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
             $destinationPath = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            
+
             { Publish-PSResource -Path $path -Repository Test -DestinationPath $destinationPath } |
             Should -Not -Throw
         }
@@ -46,19 +46,19 @@ Describe Publish-Package {
 
     Context 'with -ProxyCredential parameter' {
         It 'should publish package' -Skip {
-            
+
         }
     }
 
     Context 'with -SkipDependenciesCheck parameter' {
         It 'should publish package' -Skip {
-            
+
         }
     }
 
     Context 'with -SkipModuleManifestValidate parameter' {
         It 'should publish package' -Skip {
-            
+
         }
     }
 }

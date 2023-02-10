@@ -1,10 +1,10 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Save-Package {
     AfterEach {
         Remove-Item -Path TestDrive:\* -Recurse
     }
-    
+
     Context 'with -Name parameter' {
         It 'should save <_>' -TestCases 'SNMP', 'PSWindowsUpdate' {
             $path = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
@@ -73,7 +73,7 @@ Describe Save-Package {
                 PassThru = $true
                 TrustSource = $true
             }
-            
+
             Save-Package @savePackageParams |
             Should -Not -BeNullOrEmpty
         }
@@ -87,7 +87,7 @@ Describe Save-Package {
                 PassThru = $true
                 AsNupkg = $true
             }
-            
+
             Save-Package @savePackageParams |
             Should -Not -BeNullOrEmpty
         }
@@ -101,7 +101,7 @@ Describe Save-Package {
                 PassThru = $true
                 AuthenticodeCheck = $true
             }
-            
+
             Save-Package @savePackageParams |
             Should -Not -BeNullOrEmpty
         }
@@ -119,7 +119,7 @@ Describe Save-Package {
                 PassThru = $true
                 SkipDependencyCheck = $true
             }
-            
+
             Save-Package @savePackageParams |
             Should -Not -BeNullOrEmpty
         }
@@ -129,14 +129,14 @@ Describe Save-Package {
         It 'should save <_> successfully' -TestCases 'AnyPackage' -Skip {
             $path = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
             New-Item -Path $path\temp -ItemType Directory
-            
+
             $savePackageParams = @{
                 Name = $_
                 Path = $path
                 PassThru = $true
                 TemporaryPath = "$path\temp"
             }
-            
+
             Save-Package @savePackageParams |
             Should -Not -BeNullOrEmpty
         }
@@ -148,7 +148,7 @@ Describe Save-Package {
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
             }
-            
+
             Find-Package -Name $_ |
             Save-Package @savePackageParams |
             Should -HaveCount @($_).Length
@@ -159,7 +159,7 @@ Describe Save-Package {
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
             }
-            
+
             $_ |
             Save-Package @savePackageParams |
             Should -HaveCount @($_).Length

@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Update-Package {
     Context 'with no additional parameters' {
@@ -42,6 +42,6 @@ Describe Update-Package {
     }
 
     Context 'with pipeline' {
-        
+
     }
 }

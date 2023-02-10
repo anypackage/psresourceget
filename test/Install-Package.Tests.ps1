@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Install-Package {
     AfterEach {
@@ -122,14 +122,14 @@ Describe Install-Package {
         It 'should install <_> package from Find-Package' -TestCases 'SNMP', @('SNMP', 'PSWindowsUpdate') {
             $results = Find-Package -Name $_ |
             Install-Package -PassThru
-            
+
             $results | Should -HaveCount @($_).Length
         }
 
         It 'should install <_> package from string' -TestCases 'SNMP', @('SNMP', 'PSWindowsUpdate') {
             $results = $_ |
             Install-Package -PassThru
-            
+
             $results | Should -HaveCount @($_).Length
         }
     }

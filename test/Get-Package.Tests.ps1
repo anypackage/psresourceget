@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 using namespace NuGet.Versioning
 
@@ -11,7 +11,7 @@ Describe Get-Package {
     AfterAll {
         Uninstall-PSResource -Name SNMP, PSWindowsUpdate, DellBIOSProvider
     }
-    
+
     Context 'with no additional parameters' {
         It 'should return results' {
             Get-Package |
@@ -49,7 +49,7 @@ Describe Get-Package {
             $package.Description | Should -Be $resource.Description
             $package.Source | Should -Be $resource.Repository
             $package.Source.Location | Should -Be $resource.RepositorySourceLocation
-            
+
             $properties = $resource |
             Get-Member -MemberType Properties |
             Select-Object -ExpandProperty Name
@@ -68,7 +68,7 @@ Describe Get-Package {
                                                                           '(0.2.0,0.3.0)',
                                                                           '[0.2.0,0.3.0)' {
             $resources = Get-PSResource -Name Cobalt -Version $_
-            
+
             Get-Package -Name Cobalt -Version $_ |
             Should -HaveCount $resources.Count
         }

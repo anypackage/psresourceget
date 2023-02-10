@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Find-Package {
     Context 'with -Name parameter' {
@@ -32,7 +32,7 @@ Describe Find-Package {
                                                                           '(0.1.0,0.1.2)',
                                                                           '[0.1.0,0.1.2)' {
             $resources = Find-PSResource -Name AnyPackage -Version $_
-            
+
             Find-Package -Name AnyPackage -Version $_ |
             Should -HaveCount $resources.Count
         }
@@ -73,7 +73,7 @@ Describe Find-Package {
 
     Context 'with -Latest parameter' {
         It 'should return latest version from version range' -Skip {
-            
+
         }
     }
 }
