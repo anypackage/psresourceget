@@ -67,10 +67,10 @@ Describe Install-Package {
         AfterAll {
             Uninstall-PSResource -Name Microsoft.PowerShell.Archive -Version '[2.0,2.0.1)'
         }
-        
+
         It 'should install <_> sucessfully' -TestCases 'Microsoft.PowerShell.Archive' {
             $package = Install-Package -Name $_ -Version '[2.0,2.0.1)' -Prerelease -PassThru
-            
+
             $package.Version.IsPrerelease | Should -BeTrue
         }
     }
@@ -84,8 +84,7 @@ Describe Install-Package {
 
     Context 'with -Credential parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' -Skip {
-            Install-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
-            Should -Not -BeNullOrEmpty
+
         }
     }
 

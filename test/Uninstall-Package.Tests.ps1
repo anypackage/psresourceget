@@ -1,4 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PowerShellGet
 
 Describe Uninstall-Package {
     BeforeEach {
@@ -33,7 +33,7 @@ Describe Uninstall-Package {
                                                               '(0.2.0,0.3.0)',
                                                               '[0.2.0,0.3.0)' {
             Install-PSResource -Name Cobalt -Version $_
-            
+
             Uninstall-Package -Name Cobalt -Version $_ -PassThru |
             Should -Not -BeNullOrEmpty
         }
