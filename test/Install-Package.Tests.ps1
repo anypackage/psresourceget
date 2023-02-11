@@ -64,8 +64,14 @@ Describe Install-Package {
     }
 
     Context 'with -Prerelease parameter' {
-        It 'should install <_> sucessfully' -TestCases '' -Skip {
-            # TODO: Find a good package for this test.
+        AfterAll {
+            Uninstall-PSResource -Name Microsoft.PowerShell.Archive -Version '[2.0,2.0.1)'
+        }
+        
+        It 'should install <_> sucessfully' -TestCases 'Microsoft.PowerShell.Archive' {
+            $package = Install-Package -Name $_ -Version '[2.0,2.0.1)' -Prerelease -PassThru
+            
+            $package.Version.IsPrerelease | Should -BeTrue
         }
     }
 
