@@ -9,7 +9,7 @@ Describe Get-Package {
     }
 
     AfterAll {
-        Uninstall-PSResource -Name SNMP, PSWindowsUpdate, DellBIOSProvider
+        Uninstall-PSResource -Name SNMP, PSWindowsUpdate, DellBIOSProvider, Cobalt
     }
 
     Context 'with no additional parameters' {
