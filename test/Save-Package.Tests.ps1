@@ -12,6 +12,11 @@ Describe Save-Package {
             Save-Package -Name $_ -Path $path -PassThru |
             Should -Not -BeNullOrEmpty
         }
+
+        It 'should write error for <_> non-existant package' -TestCases 'doesnotexist' -Skip {
+            { Save-Package -Name $_ -ErrorAction Stop } |
+            Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
+        }
     }
 
     Context 'with -Version parameter' {
