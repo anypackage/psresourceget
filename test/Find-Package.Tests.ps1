@@ -10,7 +10,7 @@ Describe Find-Package {
             $results | Should -HaveCount @($resources).Length
         }
 
-        It 'should fail with <_> non-existant package' -TestCases 'randombrokenpackage' {
+        It 'should fail with <_> non-existent package' -TestCases 'randombrokenpackage' {
             { Find-Package -Name $_ -ErrorAction Stop } |
             Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
         }

@@ -28,7 +28,7 @@ Describe Get-Package {
             $results | Should -HaveCount @($resources).Length
         }
 
-        It 'should fail with <_> non-existant package' -TestCases 'brokenpackage' {
+        It 'should fail with <_> non-existent package' -TestCases 'brokenpackage' {
             { Get-Package -Name $_ -ErrorAction Stop } |
             Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
         }
