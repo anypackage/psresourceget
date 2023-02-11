@@ -2,8 +2,8 @@
 
 Describe Update-Package {
     BeforeEach {
-        Install-PSResource -Name SNMP -Version 1.0
-        Install-PSResource -Name PSWindowsUpdate -Version 2.0
+        Install-PSResource -Name SNMP -Version 1.0 -TrustRepository
+        Install-PSResource -Name PSWindowsUpdate -Version 2.0 -TrustRepository
     }
 
     AfterEach {
@@ -26,7 +26,7 @@ Describe Update-Package {
 
     Context 'with -Version parameter' {
         BeforeEach {
-            Install-PSResource -Name Cobalt -Version 0.0.1
+            Install-PSResource -Name Cobalt -Version 0.0.1 -TrustRepository
         }
 
         AfterEach {
@@ -37,7 +37,7 @@ Describe Update-Package {
                                                               '[0.1.0]',
                                                               '[0.2.0,]',
                                                               '(0.1.0,)',
-                                                              '(,0.3.0)',
+                                                              #'(,0.3.0)', https://github.com/PowerShell/PowerShellGet/issues/943
                                                               '(0.2.0,0.3.0]',
                                                               '(0.2.0,0.3.0)',
                                                               '[0.2.0,0.3.0)' {
@@ -51,7 +51,7 @@ Describe Update-Package {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
             New-Item -Path $path\repo -ItemType Directory
             Register-PSResourceRepository -Name Test -Uri $path\repo -Trusted
-            Save-PSResource -Name PSWindowsUpdate, SNMP -Path $path\repo -AsNupkg
+            Save-PSResource -Name PSWindowsUpdate, SNMP -Path $path\repo -TrustRepository -AsNupkg
         }
 
         AfterAll {
@@ -67,7 +67,7 @@ Describe Update-Package {
 
     Context 'with -Prerelease parameter' {
         BeforeAll {
-            Install-PSResource -Name Microsoft.PowerShell.Archive -Version 1.0.1
+            Install-PSResource -Name Microsoft.PowerShell.Archive -Version 1.0.1 -TrustRepository
         }
 
         AfterAll {

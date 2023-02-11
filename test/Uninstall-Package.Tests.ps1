@@ -2,7 +2,7 @@
 
 Describe Uninstall-Package {
     BeforeEach {
-        Install-PSResource -Name SNMP, PSWindowsUpdate -WarningAction SilentlyContinue -ErrorAction Ignore
+        Install-PSResource -Name SNMP, PSWindowsUpdate -TrustRepository -WarningAction SilentlyContinue -ErrorAction Ignore
     }
 
     AfterAll {
@@ -32,7 +32,7 @@ Describe Uninstall-Package {
                                                               '(0.2.0,0.3.0]',
                                                               '(0.2.0,0.3.0)',
                                                               '[0.2.0,0.3.0)' {
-            Install-PSResource -Name Cobalt -Version $_
+            Install-PSResource -Name Cobalt -Version $_ -TrustRepository
 
             Uninstall-Package -Name Cobalt -Version $_ -PassThru |
             Should -Not -BeNullOrEmpty

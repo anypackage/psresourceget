@@ -4,8 +4,8 @@ using namespace NuGet.Versioning
 
 Describe Get-Package {
     BeforeAll {
-        Install-PSResource -Name SNMP, PSWindowsUpdate, DellBIOSProvider -Quiet
-        Find-PSResource -Name Cobalt -Version '[0.1.0,0.3.0]' | Install-PSResource -Quiet
+        Install-PSResource -Name SNMP, PSWindowsUpdate, DellBIOSProvider -TrustRepository
+        Find-PSResource -Name Cobalt -Version '[0.1.0,0.3.0]' | Install-PSResource -TrustRepository
     }
 
     AfterAll {

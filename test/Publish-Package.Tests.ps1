@@ -15,7 +15,7 @@ Describe Publish-Package {
         It 'should publish <_> to local repository' -TestCases 'SNMP' {
             # https://github.com/PowerShell/PowerShellGet/issues/940
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            Save-PSResource -Name $_ -Path $testRoot
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
 
@@ -28,7 +28,7 @@ Describe Publish-Package {
         It 'should publish and create nupkg' -TestCases 'SNMP' {
             # https://github.com/PowerShell/PowerShellGet/issues/940
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            Save-PSResource -Name $_ -Path $testRoot
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
             $destinationPath = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root

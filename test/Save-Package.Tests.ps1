@@ -55,7 +55,7 @@ Describe Save-Package {
         BeforeEach {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
             New-Item -Path $path\repo -ItemType Directory
-            Save-PSResource -Name AnyPackage, SNMP -Path $path\repo -AsNupkg
+            Save-PSResource -Name AnyPackage, SNMP -Path $path\repo -TrustRepository -AsNupkg
 
             try {
                 Register-PSResourceRepository -Name Test -Uri $path\repo -Trusted
