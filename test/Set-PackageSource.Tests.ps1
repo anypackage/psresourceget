@@ -3,8 +3,8 @@
 Describe Set-PackageSource {
     BeforeAll {
         $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-        New-Item -Path $path\repo -ItemType Directory
-        Register-PSResourceRepository -Name Test -Uri $path\repo
+        New-Item -Path $path/repo -ItemType Directory
+        Register-PSResourceRepository -Name Test -Uri $path/repo
     }
 
     AfterAll {
@@ -17,8 +17,15 @@ Describe Set-PackageSource {
 
             $source = Set-PackageSource -Name Test -Location $path -PassThru
 
+            if ($IsWindows) {
+                $value = [uri]$path
+            }
+            else {
+                $value = "file://$path"
+            }
+
             $source | Should -Not -BeNullOrEmpty
-            $source.Location | Should -Be ([uri]$path)
+            $source.Location | Should -Be $value
         }
     }
 

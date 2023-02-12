@@ -3,8 +3,8 @@
 Describe Publish-Package {
     BeforeAll {
         $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-        New-Item -Path $path\repo -ItemType Directory
-        Register-PSResourceRepository -Name Test -Uri $path\repo
+        New-Item -Path $path/repo -ItemType Directory
+        Register-PSResourceRepository -Name Test -Uri $path/repo
     }
 
     AfterAll {
