@@ -29,7 +29,9 @@ jobs:
 
   Test:
     needs: Build
-    runs-on: windows-latest
+    matrix:
+        os: [macos-latest, ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -38,7 +40,15 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module
-          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.PowerShellGet\
+          path: AnyPackage.PowerShellGet
+
+      - name: Move module
+        run: |
+          if ($IsWindows) {
+            Move-Item AnyPackage.PowerShellGet $HOME\Documents\PowerShell\Modules
+          } else {
+            Move-Item AnyPackage.PowerShellGet $HOME/.local/share/powershell/Modules
+          }
 
       - name: Install AnyPackage
         run: Install-Module AnyPackage -Force -AllowClobber
@@ -59,6 +69,12 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
+
+      - name: Download module
+        uses: actions/download-artifact@v3
+        with:
+          name: module
+          path: module
 
       - name: Import certificate
         env:
