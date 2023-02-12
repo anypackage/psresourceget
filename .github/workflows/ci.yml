@@ -37,6 +37,12 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v3
 
+      - name: Install AnyPackage
+        run: Install-Module AnyPackage -Force -AllowClobber
+
+      - name: Install PowerShellGet
+        run: Install-Module PowerShellGet -AllowPrerelease -Force -AllowClobber
+
       - name: Download module
         uses: actions/download-artifact@v3
         with:
@@ -46,16 +52,12 @@ jobs:
       - name: Move module
         run: |
           if ($IsWindows) {
-            Move-Item AnyPackage.PowerShellGet $HOME\Documents\PowerShell\Modules
+            $path = "$HOME\Documents\PowerShell\Modules"
           } else {
-            Move-Item AnyPackage.PowerShellGet $HOME/.local/share/powershell/Modules
+            $path = "$HOME/.local/share/powershell/Modules"
           }
 
-      - name: Install AnyPackage
-        run: Install-Module AnyPackage -Force -AllowClobber
-
-      - name: Install PowerShellGet
-        run: Install-Module PowerShellGet -AllowPrerelease -Force -AllowClobber
+          Move-Item AnyPackage.PowerShellGet $path
 
       - name: Test with Pester
         run: |
