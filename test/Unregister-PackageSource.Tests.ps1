@@ -3,10 +3,10 @@
 Describe Unregister-PackageSource {
     BeforeEach {
         $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-        New-Item -Path $path\repo -ItemType Directory -ErrorAction Ignore
+        New-Item -Path $path/repo -ItemType Directory -ErrorAction Ignore
 
         try {
-            Register-PSResourceRepository -Name Test -Uri $path\repo
+            Register-PSResourceRepository -Name Test -Uri $path/repo
         }
         catch {
             Write-Verbose -Message 'Test repository already exists.'

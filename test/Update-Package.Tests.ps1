@@ -49,9 +49,9 @@ Describe Update-Package {
     Context 'with -Source parameter' {
         BeforeAll {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-            New-Item -Path $path\repo -ItemType Directory
-            Register-PSResourceRepository -Name Test -Uri $path\repo -Trusted
-            Save-PSResource -Name PSWindowsUpdate, SNMP -Path $path\repo -TrustRepository -AsNupkg
+            New-Item -Path $path/repo -ItemType Directory
+            Register-PSResourceRepository -Name Test -Uri $path/repo -Trusted
+            Save-PSResource -Name PSWindowsUpdate, SNMP -Path $path/repo -TrustRepository -AsNupkg
         }
 
         AfterAll {
