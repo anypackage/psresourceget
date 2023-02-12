@@ -18,7 +18,7 @@ Describe Set-PackageSource {
             $source = Set-PackageSource -Name Test -Location $path -PassThru
 
             $source | Should -Not -BeNullOrEmpty
-            $source.Location | Should -Be ([uri]$path)
+            $source.Location | Should -Be ("file://$path")
         }
     }
 
