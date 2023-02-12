@@ -154,10 +154,10 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PowerShellGet/issues/666
         Get-PSResource -Name $request.Name |
-        Select-Object -ExpandProperty Name |
+        Select-Object -ExpandProperty Name -Unique |
         Find-PSResource @params |
-        Get-Latest |
-        Update-PSResource -TrustRepository -PassThru |
+        Select-Object -ExpandProperty Name -Unique |
+        Update-PSResource @params -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
