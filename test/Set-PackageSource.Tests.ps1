@@ -17,8 +17,15 @@ Describe Set-PackageSource {
 
             $source = Set-PackageSource -Name Test -Location $path -PassThru
 
+            if ($IsWindows) {
+                $value = [uri]$path
+            }
+            else {
+                $value = "file://$path"
+            }
+
             $source | Should -Not -BeNullOrEmpty
-            $source.Location | Should -Be ("file://$path")
+            $source.Location | Should -Be $value
         }
     }
 
