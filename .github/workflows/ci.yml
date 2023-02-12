@@ -66,8 +66,8 @@ jobs:
           Invoke-Pester -Configuration $config
 
   Sign:
-    needs: Test
-    if: github.event_name == 'release' && github.event.action == 'published'
+    needs: Build
+    #if: github.event_name == 'release' && github.event.action == 'published'
     runs-on: windows-latest
     steps:
       - name: Checkout Repository
