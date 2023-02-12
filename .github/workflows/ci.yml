@@ -103,7 +103,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module-signed
-          path: '~/.local/share/powershell/Modules/AnyPackage.PowerShellGet
+          path: '~/.local/share/powershell/Modules/AnyPackage.PowerShellGet'
 
       - name: Publish Module
         env:
