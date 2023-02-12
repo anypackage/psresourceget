@@ -294,14 +294,11 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #endregion
 
     [object] GetDynamicParameters([string] $commandName) {
-        switch ($commandName) {
+        return $(switch ($commandName) {
             'Get-Package' { return [GetPackageDynamicParameters]::new() }
             'Find-Package' { return [FindPackageDynamicParameters]::new() }
             default { return $null }
-        }
-
-        #bug shouldn't have to do this.
-        return $null
+        })
     }
 
     #region ProcessResource
