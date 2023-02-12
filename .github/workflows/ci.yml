@@ -38,7 +38,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module
-          path: module
+          path: C:\Users\runneradmin\Documents\PowerShell\Modules\AnyPackage.PowerShellGet\
 
       - name: Install AnyPackage
         run: Install-Module AnyPackage -Force -AllowClobber
