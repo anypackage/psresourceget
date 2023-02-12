@@ -44,7 +44,7 @@ jobs:
         run: Install-Module AnyPackage -Force -AllowClobber
 
       - name: Install PowerShellGet
-        run: Install-Module PowerShellGet -Prerelease -Force -AllowClobber
+        run: Install-Module PowerShellGet -AllowPrerelease -Force -AllowClobber
 
       - name: Test with Pester
         run: |
