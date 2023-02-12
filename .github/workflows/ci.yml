@@ -29,8 +29,9 @@ jobs:
 
   Test:
     needs: Build
-    matrix:
-        os: [macos-latest, ubuntu-latest, windows-latest]
+    strategy:
+      matrix:
+          os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout Repository
