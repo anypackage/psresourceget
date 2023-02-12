@@ -22,6 +22,11 @@ Describe Update-Package {
             Update-Package -Name $_ -PassThru |
             Should -HaveCount @($_).Length
         }
+
+        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' {
+            { Update-Package -Name $_ -ErrorAction Stop } |
+            Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
+        }
     }
 
     Context 'with -Version parameter' {

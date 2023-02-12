@@ -13,7 +13,7 @@ Describe Install-Package {
             $results | Should -HaveCount @($_).Length
         }
 
-        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' -Skip {
+        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' {
             { Install-Package -Name $_ -ErrorAction Stop } |
             Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
         }

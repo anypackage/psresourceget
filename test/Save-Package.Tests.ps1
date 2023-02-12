@@ -13,7 +13,7 @@ Describe Save-Package {
             Should -Not -BeNullOrEmpty
         }
 
-        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' -Skip {
+        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' {
             { Save-Package -Name $_ -ErrorAction Stop } |
             Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
         }

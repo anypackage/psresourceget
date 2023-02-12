@@ -32,16 +32,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Scope'] = $request.DynamicParameters.Scope
         }
 
-        [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-
-        try {
-            $resources = Get-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $this.ProcessResources($resources, $request)
+        Get-PSResource @params |
+        Write-Package -Request $request
     }
     #endregion
 
@@ -68,26 +60,16 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Type'] = $request.DynamicParameters.Type
         }
 
-        [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-
-        try {
-            $resources = Find-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $this.ProcessResources($resources, $request)
+        Find-PSResource @params |
+        Write-Package -Request $request
     }
     #endregion
 
     #region InstallPackage
     [void] InstallPackage([PackageRequest] $request) {
         $params = @{
-            Name            = $request.Name
-            Prerelease      = $request.Prerelease
-            TrustRepository = $true
-            PassThru        = $true
+            Name       = $request.Name
+            Prerelease = $request.Prerelease
         }
 
         if ($request.Version) {
@@ -98,27 +80,18 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
-        [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-
-        try {
-            $resources = Install-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $this.ProcessResources($resources, $request)
+        Find-PSResource @params |
+        Get-Latest |
+        Install-PSResource -TrustRepository -PassThru |
+        Write-Package -Request $request
     }
     #endregion
 
     #region SavePackage
     [void] SavePackage([PackageRequest] $request) {
         $params = @{
-            Name            = $request.Name
-            Path            = $request.Path
-            Prerelease      = $request.Prerelease
-            TrustRepository = $true
-            PassThru        = $true
+            Name       = $request.Name
+            Prerelease = $request.Prerelease
         }
 
         if ($request.Version) {
@@ -129,16 +102,10 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
-        [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-
-        try {
-            $resources = Save-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $this.ProcessResources($resources, $request)
+        Find-PSResource @params |
+        Get-Latest |
+        Save-PSResource -Path $request.Path -TrustRepository -PassThru |
+        Write-Package -Request $request
     }
     #endregion
 
@@ -152,30 +119,20 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Version'] = $request.Version
         }
 
-        [List[PSResourceInfo]] $beforeResources = [List[PSResourceInfo]]::new()
-        $beforeResources = Get-PSResource @params
-
-        if (-not $beforeResources) { return }
-
         # Issue to get PassThru parameter added
         # https://github.com/PowerShell/PowerShellGet/issues/667
 
         # Prerelease parameter causes it to silently fail
         # https://github.com/PowerShell/PowerShellGet/issues/842
-        try {
-            Uninstall-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $afterResources = Get-PSResource @params
-
-        if ($afterResources) {
-            throw "Failed uninstalling package '$($request.Name)'. One or more versions are still installed."
-        }
-        else {
-            $this.ProcessResources($beforeResources, $request)
+        Get-PSResource @params |
+        ForEach-Object {
+            try {
+                $_ | Uninstall-PSResource -ErrorAction Stop
+                $_ | Write-Package -Request $request
+            }
+            catch {
+                $_
+            }
         }
     }
     #endregion
@@ -183,10 +140,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region UpdatePackage
     [void] UpdatePackage([PackageRequest] $request) {
         $params = @{
-            Name            = $request.Name
-            Prerelease      = $request.Prerelease
-            TrustRepository = $true
-            PassThru        = $true
+            Prerelease = $request.Prerelease
         }
 
         if ($request.Version) {
@@ -197,16 +151,14 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
-        [List[PSResourceInfo]] $resources = [List[PSResourceInfo]]::new()
-
-        try {
-            $resources = Update-PSResource @params -ErrorAction Stop
-        }
-        catch {
-            throw $_
-        }
-
-        $this.ProcessResources($resources, $request)
+        # Find-PSResource pipeline input
+        # https://github.com/PowerShell/PowerShellGet/issues/666
+        Get-PSResource -Name $request.Name |
+        Select-Object -ExpandProperty Name -Unique |
+        Find-PSResource @params |
+        Select-Object -ExpandProperty Name -Unique |
+        Update-PSResource @params -TrustRepository -PassThru |
+        Write-Package -Request $request
     }
     #endregion
 
@@ -221,18 +173,17 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         }
 
         try {
+            # PassThru parameter
+            # https://github.com/PowerShell/PowerShellGet/issues/718
             Publish-PSResource @params -ErrorAction Stop
 
-            $resourceName = Get-Item -Path $request.Path | Select-Object -ExpandProperty BaseName
+            $params.Remove('Path')
+            $params['Name'] = Get-Item -Path $request.Path |
+            Select-Object -ExpandProperty BaseName
 
-            if ($request.Source) {
-                $resource = Find-PSResource -Name $resourceName -Source $request.Source
-            }
-            else {
-                $resource = Find-PSResource -Name $resourceName
-            }
-
-            $this.ProcessResource($resource, $request)
+            Find-PSResource @params |
+            Get-Latest |
+            Write-Package -Request $request
         }
         catch {
             throw $_
@@ -241,104 +192,55 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #endregion
 
     #region Source
-    [void] GetSource([SourceRequest] $request) {
-        $repos = Get-PSResourceRepository -Name $request.Name -ErrorAction SilentlyContinue
-
-        foreach ($repo in $repos) {
-            $request.WriteSource($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority })
-        }
+    [void] GetSource([SourceRequest] $sourceRequest) {
+        Get-PSResourceRepository -Name $sourceRequest.Name |
+        Write-Source -SourceRequest $sourceRequest
     }
 
-    [void] SetSource([SourceRequest] $request) {
+    [void] SetSource([SourceRequest] $sourceRequest) {
         $params = @{
-            Name     = $request.Name
             PassThru = $true
         }
 
-        if ($request.Location) {
-            $params.Uri = $request.Location
+        if ($sourceRequest.Location) {
+            $params.Uri = $sourceRequest.Location
         }
 
-        if ($null -ne $request.Trusted) {
-            $params.Trusted = $request.Trusted
+        if ($null -ne $sourceRequest.Trusted) {
+            $params.Trusted = $sourceRequest.Trusted
         }
 
-        $repo = Set-PSResourceRepository @params
-
-        $request.WriteSource($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority })
+        Get-PSResourceRepository -Name $sourceRequest.Name |
+        Set-PSResourceRepository @params |
+        Write-Source -SourceRequest $sourceRequest
     }
 
-    [void] RegisterSource([SourceRequest] $request) {
+    [void] RegisterSource([SourceRequest] $sourceRequest) {
         $params = @{
-            Name     = $request.Name
-            Uri      = $request.Location
-            Trusted  = $request.Trusted
+            Name     = $sourceRequest.Name
+            Uri      = $sourceRequest.Location
+            Trusted  = $sourceRequest.Trusted
             PassThru = $true
         }
 
-        $repo = Register-PSResourceRepository @params
-
-        $request.WriteSource($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority })
+        Register-PSResourceRepository @params |
+        Write-Source -SourceRequest $sourceRequest
     }
 
-    [void] UnregisterSource([SourceRequest] $request) {
-        $params = @{
-            Name     = $request.Name
-            PassThru = $true
-        }
-
-        $repo = Unregister-PSResourceRepository @params
-
-        $request.WriteSource($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority })
+    [void] UnregisterSource([SourceRequest] $sourceRequest) {
+        Get-PSResourceRepository -Name $sourceRequest.Name |
+        Unregister-PSResourceRepository -PassThru |
+        Write-Source -SourceRequest $sourceRequest
     }
     #endregion
 
     [object] GetDynamicParameters([string] $commandName) {
-        switch ($commandName) {
+        return $(switch ($commandName) {
             'Get-Package' { return [GetPackageDynamicParameters]::new() }
             'Find-Package' { return [FindPackageDynamicParameters]::new() }
             default { return $null }
-        }
-
-        #bug shouldn't have to do this.
-        return $null
+        })
     }
-
-    #region ProcessResource
-    hidden [void] ProcessResources([IEnumerable[PSResourceInfo]] $resources, [PackageRequest] $request) {
-        foreach ($resource in $resources) {
-            $this.ProcessResource($resource, $request)
-        }
-    }
-
-    hidden [void] ProcessResource([PSResourceInfo] $resource, [PackageRequest] $request) {
-        $request.WriteVerbose("Processing '$($resource.Name)' resource.")
-
-        $repo = Get-PSResourceRepository -Name $resource.Repository
-        $ht = ConvertTo-PackageMetadata $resource
-
-        $deps = [List[PackageDependency]]::new()
-        foreach ($dep in $resource.Dependencies) {
-            $dependency = [PackageDependency]::new($dep.Name, $dep.VersionRange)
-            $deps.Add($dependency)
-        }
-
-        if ($repo) {
-            $repoInfo = $request.NewSourceInfo($repo.Name, $repo.Uri, [bool]::Parse($repo.Trusted), @{ Priority = $repo.Priority; CredentialInfo = $repo.CredentialInfo })
-        }
-        else {
-            $repoInfo = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
-        }
-
-        $version = $resource.Version.ToString()
-
-        if ($resource.Prerelease) {
-            $version = $version + '-' + $resource.Prerelease
-        }
-
-        $request.WritePackage($resource.Name, $version, $resource.Description, $repoInfo, $ht, $deps)
-    }
-    #endregion
 }
 
 class GetPackageDynamicParameters {
@@ -389,5 +291,97 @@ function ConvertTo-PackageMetadata {
         }
 
         $hashtable
+    }
+}
+
+function Get-Latest {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory,
+            ValueFromPipeline)]
+        [PSResourceInfo]
+        $Resource
+    )
+
+    begin {
+        $resources = [List[PSResourceInfo]]::new()
+    }
+
+    process {
+        $resources.Add($resource)
+    }
+
+    end {
+        $resources |
+        Group-Object -Property Name |
+        ForEach-Object {
+            # PowerShellGet returns the latest as the first object
+            $_.Group | Select-Object -First 1
+        }
+    }
+}
+
+function Write-Source {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory,
+            ValueFromPipeline)]
+        [PSRepositoryInfo]
+        $Source,
+
+        [Parameter(Mandatory)]
+        [SourceRequest]
+        $SourceRequest
+    )
+
+    process {
+        $SourceRequest.WriteSource($Source.Name,
+                                   $Source.Uri,
+                                   [bool]::Parse($Source.Trusted),
+                                   @{ Priority = $Source.Priority
+                                      CredentialInfo = $Source.CredentialInfo })
+    }
+}
+
+function Write-Package {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory,
+            ValueFromPipeline)]
+        [PSResourceInfo]
+        $Resource,
+
+        [Parameter(Mandatory)]
+        [PackageRequest]
+        $Request
+    )
+
+    begin {
+        $sources = Get-PackageSource -Provider AnyPackage.PowerShellGet\PowerShellGet
+    }
+
+    process {
+        $ht = ConvertTo-PackageMetadata $resource
+
+        $deps = [List[PackageDependency]]::new()
+        foreach ($dep in $resource.Dependencies) {
+            $dependency = [PackageDependency]::new($dep.Name, $dep.VersionRange)
+            $deps.Add($dependency)
+        }
+
+        $source = $sources |
+        Where-Object Name -eq $Request.Source
+
+        if (-not $source) {
+            $source = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
+        }
+
+        $version = $resource.Version.ToString()
+
+        if ($resource.Prerelease) {
+            $version = $version + '-' + $resource.Prerelease
+        }
+
+        $request.WritePackage($resource.Name, $version, $resource.Description, $source, $ht, $deps)
     }
 }
