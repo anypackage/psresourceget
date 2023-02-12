@@ -17,7 +17,7 @@ Describe Uninstall-Package {
             $results | Should -HaveCount @($_).Length
         }
 
-        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' -Skip {
+        It 'should write error for <_> non-existent package' -TestCases 'doesnotexist' {
             { Uninstall-Package -Name $_ -ErrorAction Stop } |
             Should -Throw -ExpectedMessage "Package not found. (Package '$_')"
         }
