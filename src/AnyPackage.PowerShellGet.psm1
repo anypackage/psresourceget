@@ -59,7 +59,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         if ($request.DynamicParameters.Type) {
             $params['Type'] = $request.DynamicParameters.Type
         }
-        
+
         Find-PSResource @params |
         Write-Package -Request $request
     }
@@ -338,7 +338,7 @@ function Write-Source {
         $SourceRequest.WriteSource($Source.Name,
                                    $Source.Uri,
                                    [bool]::Parse($Source.Trusted),
-                                   @{ Priority = $Source.Priority 
+                                   @{ Priority = $Source.Priority
                                       CredentialInfo = $Source.CredentialInfo })
     }
 }
