@@ -370,7 +370,7 @@ function Write-Package {
         }
 
         $source = $sources |
-        Where-Object Name -eq $Request.Name
+        Where-Object Name -eq $Request.Source
 
         if (-not $source) {
             $source = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
@@ -382,6 +382,6 @@ function Write-Package {
             $version = $version + '-' + $resource.Prerelease
         }
 
-        $request.WritePackage($resource.Name, $version, $resource.Description, $repoInfo, $ht, $deps)
+        $request.WritePackage($resource.Name, $version, $resource.Description, $source, $ht, $deps)
     }
 }
