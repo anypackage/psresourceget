@@ -100,7 +100,7 @@ jobs:
       - name: Create and sign catalog file
         run: |
           $config = Import-PowerShellDataFile SignSettings.psd1
-          $config['FilePath'] = 'AnyPackage.AnyPackage.cat'
+          $config['FilePath'] = 'AnyPackage.PowerSHellGet.cat'
           $config['Certificate'] = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert
           Set-Location .\module
           New-FileCatalog $config['FilePath'] -CatalogVersion 2
