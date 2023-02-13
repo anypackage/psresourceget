@@ -273,6 +273,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             'Save-Package' { return [SavePackageDynamicParameters]::new() }
             'Uninstall-Package' { return [UninstallPackageDynamicParameters]::new() }
             'Update-Package' { return [UpdatePackageDynamicParameters]::new() }
+            'Set-PackageSource' { return [SetPackageSourceDynamicParameters]::new() }
             'Register-PackageSource' { return [RegisterPackageSourceDynamicParameters]::new() }
             default { return $null }
         })
@@ -376,13 +377,15 @@ class UpdatePackageDynamicParameters : InstallUpdateDynamicParameters {
     [switch] $Force
 }
 
-class RegisterPackageSourceDynamicParameters {
+class SetPackageSourceDynamicParameters {
     [Parameter()]
     [int] $Priority
-
+    
     [Parameter()]
     [PSCredentialInfo] $CredentialInfo
+}
 
+class RegisterPackageSourceDynamicParameters : SetPackageSourceDynamicParameters {
     [Parameter(ParameterSetName = 'PSGallery')]
     [switch] $PSGallery
 }
