@@ -76,7 +76,7 @@ Describe Install-Package {
     }
 
     Context 'with -AuthenticodeCheck parameter' {
-        It 'should install <_> successfully' -TestCases 'SNMP' -Skip {
+        It 'should install <_> successfully' -TestCases 'Scoop' {
             Install-Package -Name $_ -Provider PowerShellGet -AuthenticodeCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }

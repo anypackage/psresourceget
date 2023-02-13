@@ -85,9 +85,15 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
+        $installParams = @{ }
+
+        if ($request.DynamicParameters.AuthenticodeCheck) {
+            $installParams['AuthenticodeCheck'] = $request.DynamicParameters.AuthenticodeCheck
+        }
+
         Find-PSResource @params |
         Get-Latest |
-        Install-PSResource -TrustRepository -PassThru |
+        Install-PSResource @installParams -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
@@ -243,6 +249,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         return $(switch ($commandName) {
             'Get-Package' { return [GetPackageDynamicParameters]::new() }
             'Find-Package' { return [FindPackageDynamicParameters]::new() }
+            'Install-Package' { return [InstallPackageDynamicParameters]::new() }
             default { return $null }
         })
     }
@@ -266,6 +273,12 @@ class FindPackageDynamicParameters {
     [Parameter()]
     [switch]
     $Latest
+}
+
+class InstallPackageDynamicParameters {
+    [Parameter()]
+    [switch]
+    $AuthenticodeCheck
 }
 
 [PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
