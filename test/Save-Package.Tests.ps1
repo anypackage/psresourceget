@@ -85,12 +85,32 @@ Describe Save-Package {
     }
 
     Context 'with -AsNupkg parameter' {
+        # Pipeline input fails with -AsNupkg
+        # https://github.com/PowerShell/PowerShellGet/issues/948
         It 'should save <_> successfully' -TestCases 'AnyPackge' -Skip {
             $savePackageParams = @{
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 AsNupkg = $true
+                Provider = 'PowerShellGet'
+            }
+
+            Save-Package @savePackageParams |
+            Should -Not -BeNullOrEmpty
+        }
+    }
+
+    Context 'with -IncludeXml parameter' {
+        # Pipeline input fails with -IncludeXml
+        # https://github.com/PowerShell/PowerShellGet/issues/949
+        It 'should save <_> successfully' -TestCases 'AnyPackge' -Skip {
+            $savePackageParams = @{
+                Name = $_
+                Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
+                PassThru = $true
+                IncludeXml = $true
+                Provider = 'PowerShellGet'
             }
 
             Save-Package @savePackageParams |
@@ -99,11 +119,12 @@ Describe Save-Package {
     }
 
     Context 'with -AuthenticodeCheck parameter' {
-        It 'should save <_> successfully' -TestCases 'AnyPackage' -Skip {
+        It 'should save <_> successfully' -TestCases 'Scoop' {
             $savePackageParams = @{
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
+                Provider = 'PowerShellGet'
                 AuthenticodeCheck = $true
             }
 
@@ -117,12 +138,13 @@ Describe Save-Package {
     }
 
     Context 'with -SkipDependencyCheck parameter' {
-        It 'should save <_>' -TestCases 'AnyPackage.Scoop' -Skip {
+        It 'should save <_>' -TestCases 'AnyPackage.Scoop' {
             $savePackageParams = @{
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 SkipDependencyCheck = $true
+                Provider = 'PowerShellGet'
             }
 
             Save-Package @savePackageParams |
@@ -131,15 +153,16 @@ Describe Save-Package {
     }
 
     Context 'with -TemporaryPath parameter' {
-        It 'should save <_> successfully' -TestCases 'AnyPackage' -Skip {
+        It 'should save <_> successfully' -TestCases 'AnyPackage' {
             $path = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            New-Item -Path $path\temp -ItemType Directory
+            New-Item -Path $path/temp -ItemType Directory
 
             $savePackageParams = @{
                 Name = $_
                 Path = $path
                 PassThru = $true
-                TemporaryPath = "$path\temp"
+                Provider = 'PowerShellGet'
+                TemporaryPath = "$path/temp"
             }
 
             Save-Package @savePackageParams |

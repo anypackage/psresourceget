@@ -24,13 +24,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Version'] = $request.Version
         }
 
-        if ($request.DynamicParameters.Path) {
-            $params['Path'] = $request.DynamicParameters.Path
-        }
-
-        if ($request.DynamicParameters.Scope) {
-            $params['Scope'] = $request.DynamicParameters.Scope
-        }
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $params -IsBound
 
         Get-PSResource @params |
         Write-Package -Request $request
@@ -52,13 +47,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
-        if ($request.DynamicParameters.Tag) {
-            $params['Tag'] = $request.DynamicParameters.Tag
-        }
-
-        if ($request.DynamicParameters.Type) {
-            $params['Type'] = $request.DynamicParameters.Type
-        }
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $params -Exclude 'Latest' -IsBound
 
         $resources = Find-PSResource @params
 
@@ -85,9 +75,14 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
+        $installParams = @{ }
+
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $installParams -IsBound
+
         Find-PSResource @params |
         Get-Latest |
-        Install-PSResource -TrustRepository -PassThru |
+        Install-PSResource @installParams -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
@@ -107,9 +102,14 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
+        $saveParams = @{ }
+
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $saveParams -IsBound
+
         Find-PSResource @params |
         Get-Latest |
-        Save-PSResource -Path $request.Path -TrustRepository -PassThru |
+        Save-PSResource @saveParams -Path $request.Path -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
@@ -124,6 +124,11 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Version'] = $request.Version
         }
 
+        $uninstallParams = @{ }
+
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $uninstallParams -IsBound
+
         # Issue to get PassThru parameter added
         # https://github.com/PowerShell/PowerShellGet/issues/667
 
@@ -132,7 +137,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Get-PSResource @params |
         ForEach-Object {
             try {
-                $_ | Uninstall-PSResource -ErrorAction Stop
+                $_ | Uninstall-PSResource @uninstallParams -ErrorAction Stop
                 $_ | Write-Package -Request $request
             }
             catch {
@@ -156,13 +161,18 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
+        $uninstallParams = @{ }
+
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $uninstallParams -IsBound
+
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PowerShellGet/issues/666
         Get-PSResource -Name $request.Name |
         Select-Object -ExpandProperty Name -Unique |
         Find-PSResource @params |
         Select-Object -ExpandProperty Name -Unique |
-        Update-PSResource @params -TrustRepository -PassThru |
+        Update-PSResource @params @uninstallParams -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
@@ -176,6 +186,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         if ($request.Source) {
             $params['Repository'] = $request.Source
         }
+
+        $request.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $params -IsBound
 
         try {
             # PassThru parameter
@@ -215,6 +228,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params.Trusted = $sourceRequest.Trusted
         }
 
+        $sourceRequest.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $params -IsBound
+
         Get-PSResourceRepository -Name $sourceRequest.Name |
         Set-PSResourceRepository @params |
         Write-Source -SourceRequest $sourceRequest
@@ -222,11 +238,20 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
     [void] RegisterSource([SourceRequest] $sourceRequest) {
         $params = @{
-            Name     = $sourceRequest.Name
-            Uri      = $sourceRequest.Location
             Trusted  = $sourceRequest.Trusted
             PassThru = $true
         }
+
+        if ($sourceRequest.DynamicParameters.PSGallery) {
+            $params['PSGallery'] = $true
+        }
+        else {
+            $params['Name'] = $sourceRequest.Name
+            $params['Uri'] = $sourceRequest.Location
+        }
+
+        $sourceRequest.DynamicParameters |
+        ConvertTo-Hashtable -Hashtable $params -Exclude 'PSGallery' -IsBound
 
         Register-PSResourceRepository @params |
         Write-Source -SourceRequest $sourceRequest
@@ -243,6 +268,13 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         return $(switch ($commandName) {
             'Get-Package' { return [GetPackageDynamicParameters]::new() }
             'Find-Package' { return [FindPackageDynamicParameters]::new() }
+            'Install-Package' { return [InstallPackageDynamicParameters]::new() }
+            'Publish-Package' { return [PublishPackageDynamicParameters]::new() }
+            'Save-Package' { return [SavePackageDynamicParameters]::new() }
+            'Uninstall-Package' { return [UninstallPackageDynamicParameters]::new() }
+            'Update-Package' { return [UpdatePackageDynamicParameters]::new() }
+            'Set-PackageSource' { return [SetPackageSourceDynamicParameters]::new() }
+            'Register-PackageSource' { return [RegisterPackageSourceDynamicParameters]::new() }
             default { return $null }
         })
     }
@@ -264,8 +296,98 @@ class FindPackageDynamicParameters {
     [ResourceType] $Type
 
     [Parameter()]
-    [switch]
-    $Latest
+    [switch] $Latest
+
+    [Parameter()]
+    [switch] $IncludeDependencies
+}
+
+class PublishPackageDynamicParameters {
+    [Parameter()]
+    [string] $ApiKey
+
+    [Parameter()]
+    [string] $DestinationPath
+
+    [Parameter()]
+    [switch] $SkipDependenciesCheck
+
+    [Parameter()]
+    [switch] $SkipModuleManifestValidate
+
+    [Parameter()]
+    [uri] $Proxy
+
+    [Parameter()]
+    [pscredential] $ProxyCredential
+}
+
+class InstallDynamicParameters {
+    [Parameter()]
+    [switch] $AuthenticodeCheck
+
+    [Parameter()]
+    [switch] $Credential
+
+    [Parameter()]
+    [switch] $SkipDependencyCheck
+
+    [Parameter()]
+    [string] $TemporaryPath
+}
+
+class InstallUpdateDynamicParameters : InstallDynamicParameters {
+    [Parameter()]
+    [switch] $AcceptLicense
+
+    [Parameter()]
+    [ScopeType] $Scope
+}
+
+class InstallPackageDynamicParameters : InstallUpdateDynamicParameters {
+    [Parameter()]
+    [switch] $Reinstall
+
+    [Parameter()]
+    [switch] $NoClobber
+}
+
+class SavePackageDynamicParameters : InstallDynamicParameters {
+    # Pipeline input fails with -AsNupkg
+    # https://github.com/PowerShell/PowerShellGet/issues/948
+    # [Parameter()]
+    # [switch] $AsNupkg
+
+    # Pipeline input fails with -IncludeXml
+    # https://github.com/PowerShell/PowerShellGet/issues/949
+    # [Parameter()]
+    # [switch] $IncludeXml
+}
+
+class UninstallPackageDynamicParameters {
+    [Parameter()]
+    [switch] $SkipDependencyCheck
+
+    [Parameter()]
+    [ScopeType] $Scope
+}
+
+class UpdatePackageDynamicParameters : InstallUpdateDynamicParameters {
+    [Parameter()]
+    [switch] $Force
+}
+
+class SetPackageSourceDynamicParameters {
+    [Parameter()]
+    [int] $Priority
+
+    [Parameter()]
+    [PSCredentialInfo] $CredentialInfo
+}
+
+class RegisterPackageSourceDynamicParameters : SetPackageSourceDynamicParameters {
+    [Parameter(ParameterSetName = 'PSGallery')]
+    [switch] $PSGallery
 }
 
 [PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
@@ -274,32 +396,49 @@ $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     [PackageProviderManager]::UnregisterProvider([PowerShellGetProvider])
 }
 
-function ConvertTo-PackageMetadata {
+function ConvertTo-Hashtable {
     [CmdletBinding()]
     [OutputType([hashtable])]
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseSingularNouns', '')]
     param (
-        [PSResourceInfo]
         [Parameter(Position = 0,
             ValueFromPipeline,
             ValueFromPipelineByPropertyName)]
-        $InputObject
+        [object]
+        $InputObject,
+
+        [Parameter()]
+        [hashtable]
+        $Hashtable = @{ },
+
+        [Parameter()]
+        [string[]]
+        $Exclude,
+
+        [Parameter()]
+        [switch]
+        $IsBound
     )
 
-    begin {
-        $properties = $InputObject |
-            Get-Member -MemberType Properties |
-            Select-Object -ExpandProperty Name
-    }
-
     process {
-        $hashtable = @{}
-
-        foreach ($property in $properties) {
-            $hashtable[$property] = $InputObject.$property
+        if ($null -eq $InputObject) {
+            return
         }
 
-        $hashtable
+        $properties = $InputObject |
+            Get-Member -MemberType Properties |
+            Where-Object Name -notin $Exclude |
+            Select-Object -ExpandProperty Name
+
+        foreach ($property in $properties) {
+            if ($IsBound -and -not $InputObject.$property) {
+                continue
+            }
+
+            $Hashtable[$property] = $InputObject.$property
+        }
+
+        $Hashtable
     }
 }
 
@@ -370,7 +509,7 @@ function Write-Package {
     }
 
     process {
-        $ht = ConvertTo-PackageMetadata $resource
+        $ht = ConvertTo-Hashtable $resource
 
         $deps = [List[PackageDependency]]::new()
         foreach ($dep in $resource.Dependencies) {

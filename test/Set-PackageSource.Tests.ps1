@@ -29,8 +29,23 @@ Describe Set-PackageSource {
         }
     }
 
+    Context 'with -Priority parameter' {
+        It 'should have priority <_>' -TestCases 10 {
+            $registerPackageSourceParams = @{
+                Name = 'Test'
+                Provider = 'PowerShellGet'
+                PassThru = $true
+                Priority = $_
+            }
+
+            $source = Set-PackageSource @registerPackageSourceParams
+
+            $source.Metadata['Priority'] | Should -Be $_
+        }
+    }
+
     Context 'with -CredentialInfo parameter' {
-        It 'should register with vault <VaultName> and secret <SecretName>' -TestCases @{ VaultName = 'Test'; SecretName = 'shhh' } -Skip {
+        It 'should register with vault name <VaultName> and secret name <SecretName>' -TestCases @{ VaultName = 'Test'; SecretName = 'shhh' } {
 
             $registerPackageSourceParams = @{
                 Name = 'Test'
@@ -42,8 +57,8 @@ Describe Set-PackageSource {
             $source = Set-PackageSource @registerPackageSourceParams
 
             $source | Should -Not -BeNullOrEmpty
-            $source.Metadata['CredentialInfo']['VaultName'] | Should -Be $VaultName
-            $source.Metadata['CredentialInfo']['SecretName'] | Should -Be $SecretName
+            $source.Metadata['CredentialInfo'].VaultName | Should -Be $VaultName
+            $source.Metadata['CredentialInfo'].SecretName | Should -Be $SecretName
         }
     }
 
