@@ -241,7 +241,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             Trusted  = $sourceRequest.Trusted
             PassThru = $true
         }
-        
+
         if ($sourceRequest.DynamicParameters.PSGallery) {
             $params['PSGallery'] = $true
         }
