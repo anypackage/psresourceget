@@ -40,15 +40,22 @@ Describe Uninstall-Package {
     }
 
     Context 'with -Scope parameter' {
-        It 'should uninstall <_> successfully' -TestCases 'SNMP' -Skip {
-            Install-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+        It 'should uninstall <_> successfully' -TestCases 'SNMP' {
+            Uninstall-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -SkipDependencyCheck' {
-        It 'should uninstall <_> successfully' -TestCases 'SNMP' -Skip {
-            Install-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+        It 'should uninstall <_> successfully' -TestCases 'SNMP' {
+            Uninstall-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+            Should -Not -BeNullOrEmpty
+        }
+    }
+
+    Context 'with -Scope' {
+        It 'should uninstall <_> successfully' -TestCases 'SNMP' {
+            Uninstall-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }

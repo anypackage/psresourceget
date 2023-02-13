@@ -87,7 +87,7 @@ Describe Update-Package {
     }
 
     Context 'with -AcceptLicense parameter' {
-        It 'should update <_> successfully' -TestCases 'SNMP' -Skip {
+        It 'should update <_> successfully' -TestCases 'SNMP' {
             Update-Package -Name $_ -Provider PowerShellGet -AcceptLicense -PassThru |
             Should -Not -BeNullOrEmpty
         }
@@ -100,21 +100,22 @@ Describe Update-Package {
     }
 
     Context 'with -TemporaryPath paramter' {
-        It 'should update <_> successfully' -TestCases 'SNMP' -Skip {
-            Update-Package -Name $_ -Provider PowerShellGet -TemporaryPath TempDrive: -PassThru |
+        It 'should update <_> successfully' -TestCases 'SNMP' {
+            $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
+            Update-Package -Name $_ -Provider PowerShellGet -TemporaryPath $path -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Scope parameter' {
-        It 'should update <_> successfully' -TestCases 'SNMP' -Skip {
+        It 'should update <_> successfully' -TestCases 'SNMP' {
             Update-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -SkipDependencyCheck' {
-        It 'should update <_> successfully' -TestCases 'SNMP' -Skip {
+        It 'should update <_> successfully' -TestCases 'SNMP' {
             Update-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }

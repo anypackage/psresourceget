@@ -51,14 +51,26 @@ Describe Publish-Package {
     }
 
     Context 'with -SkipDependenciesCheck parameter' {
-        It 'should publish package' -Skip {
+        It 'should publish <_> successfully' -TestCases 'SNMP' {
+            $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository -SkipDependencyCheck
 
+            $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
+
+            { Publish-PSResource -Path $path -Repository Test } |
+            Should -Not -Throw
         }
     }
 
     Context 'with -SkipModuleManifestValidate parameter' {
-        It 'should publish package' -Skip {
+        It 'should publish <_> successfully' -TestCases 'SNMP' {
+            $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository -SkipModuleManifestValidate
 
+            $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
+
+            { Publish-PSResource -Path $path -Repository Test } |
+            Should -Not -Throw
         }
     }
 }

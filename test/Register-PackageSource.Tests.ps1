@@ -1,5 +1,8 @@
 #requires -modules AnyPackage.PowerShellGet
 
+using module PowerShellGet
+using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
+
 Describe Register-Package {
     AfterEach {
         try {
@@ -68,7 +71,7 @@ Describe Register-Package {
     }
 
     Context 'with -Priority parameter' {
-        It 'should have priority <_>' -TestCases 10 -Skip {
+        It 'should have priority <_>' -TestCases 10 {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
 
             $registerPackageSourceParams = @{
@@ -86,12 +89,21 @@ Describe Register-Package {
     }
 
     Context 'with -PSGallery parameter' {
-        It 'should register' -Skip {
+        BeforeAll {
             Unregister-PSResourceRepository -Name PSGallery
+        }
 
+        AfterAll {
+            try {
+                Unregister-PSResourceRepository -Name PSGallery
+            }
+            catch {
+                Write-Verbose -Message 'PSGallery already registered.'
+            }
+        }
+
+        It 'should register' {
             $registerPackageSourceParams = @{
-                Name = 'Test'
-                Location = $path
                 Provider = 'PowerShellGet'
                 PassThru = $true
                 PSGallery = $true
@@ -103,7 +115,7 @@ Describe Register-Package {
     }
 
     Context 'with -CredentialInfo parameter' {
-        It 'should register with vault <VaultName> and secret <SecretName>' -TestCases @{ VaultName = 'Test'; SecretName = 'shhh' } -Skip {
+        It 'should register with vault name <VaultName> and secret name <SecretName>' -TestCases @{ VaultName = 'Test'; SecretName = 'shhh' } {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
 
             $registerPackageSourceParams = @{
@@ -117,8 +129,8 @@ Describe Register-Package {
             $source = Register-PackageSource @registerPackageSourceParams
 
             $source | Should -Not -BeNullOrEmpty
-            $source.Metadata['CredentialInfo']['VaultName'] | Should -Be $VaultName
-            $source.Metadata['CredentialInfo']['SecretName'] | Should -Be $SecretName
+            $source.Metadata['CredentialInfo'].VaultName | Should -Be $VaultName
+            $source.Metadata['CredentialInfo'].SecretName | Should -Be $SecretName
         }
     }
 }
