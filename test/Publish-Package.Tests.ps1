@@ -53,11 +53,11 @@ Describe Publish-Package {
     Context 'with -SkipDependenciesCheck parameter' {
         It 'should publish <_> successfully' -TestCases 'SNMP' {
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            Save-PSResource -Name $_ -Path $testRoot -TrustRepository -SkipDependencyCheck
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
 
-            { Publish-PSResource -Path $path -Repository Test } |
+            { Publish-PSResource -Path $path -Repository Test -SkipDependenciesCheck } |
             Should -Not -Throw
         }
     }
@@ -65,11 +65,11 @@ Describe Publish-Package {
     Context 'with -SkipModuleManifestValidate parameter' {
         It 'should publish <_> successfully' -TestCases 'SNMP' {
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
-            Save-PSResource -Name $_ -Path $testRoot -TrustRepository -SkipModuleManifestValidate
+            Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 
             $path = Get-ChildItem -Path TestDrive: -Recurse -Include "$_.psd1"
 
-            { Publish-PSResource -Path $path -Repository Test } |
+            { Publish-PSResource -Path $path -Repository Test -SkipModuleManifestValidate } |
             Should -Not -Throw
         }
     }
