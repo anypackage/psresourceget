@@ -380,7 +380,7 @@ class UpdatePackageDynamicParameters : InstallUpdateDynamicParameters {
 class SetPackageSourceDynamicParameters {
     [Parameter()]
     [int] $Priority
-    
+
     [Parameter()]
     [PSCredentialInfo] $CredentialInfo
 }
