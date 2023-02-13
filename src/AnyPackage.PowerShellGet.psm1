@@ -60,8 +60,13 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Type'] = $request.DynamicParameters.Type
         }
 
-        Find-PSResource @params |
-        Write-Package -Request $request
+        $resources = Find-PSResource @params
+
+        if ($request.DynamicParameters.Latest) {
+            $resources = $resources | Get-Latest
+        }
+
+        $resources | Write-Package -Request $request
     }
     #endregion
 
@@ -257,6 +262,10 @@ class FindPackageDynamicParameters {
 
     [Parameter()]
     [ResourceType] $Type
+
+    [Parameter()]
+    [switch]
+    $Latest
 }
 
 [PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)

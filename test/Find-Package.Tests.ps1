@@ -72,8 +72,12 @@ Describe Find-Package {
     }
 
     Context 'with -Latest parameter' {
-        It 'should return latest version from version range' -Skip {
+        It 'should return latest version for <_> version range' -TestCases '[1.0,2.0]' {
+            $resource = Find-PSResource -Name PowerShellGet -Version $_ |
+            Select-Object -First 1
+            $package = Find-Package -Name PowerShellGet -Version $_ -Provider PowerShellGet -Latest
 
+            $package.Version.ToString() | Should -Be $resource.Version.ToString()
         }
     }
 }
