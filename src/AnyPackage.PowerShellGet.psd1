@@ -1,6 +1,6 @@
 @{
     RootModule = 'AnyPackage.PowerShellGet.psm1'
-    ModuleVersion = '0.1.0'
+    ModuleVersion = '0.2.0'
     CompatiblePSEditions = @('Desktop', 'Core')
     GUID = 'cc680200-a0c8-40df-a004-64c3899a72c9'
     Author = 'Thomas Nieto'
