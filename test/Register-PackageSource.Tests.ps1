@@ -95,7 +95,7 @@ Describe Register-Package {
 
         AfterAll {
             try {
-                Unregister-PSResourceRepository -Name PSGallery
+                Register-PSResourceRepository -Name PSGallery
             }
             catch {
                 Write-Verbose -Message 'PSGallery already registered.'
