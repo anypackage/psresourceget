@@ -80,4 +80,10 @@ Describe Find-Package {
             $package.Version.ToString() | Should -Be $resource.Version.ToString()
         }
     }
+
+    Context 'with -Credential parameter' {
+        It 'should find <_> successfully' -TestCases 'SNMP' -Skip {
+
+        }
+    }
 }
