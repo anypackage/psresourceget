@@ -291,7 +291,7 @@ class GetPackageDynamicParameters {
 class FindPackageDynamicParameters {
     [Parameter()]
     [switch] $Credential
-    
+
     [Parameter()]
     [string[]] $Tag
 
