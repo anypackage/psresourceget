@@ -124,6 +124,9 @@ jobs:
           name: module-signed
           path: '~/.local/share/powershell/Modules/AnyPackage.PowerShellGet'
 
+      - name: Install AnyPackage
+        run: Install-Module AnyPackage -Force -AllowClobber
+
       - name: Publish Module
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
