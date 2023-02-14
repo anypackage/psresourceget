@@ -290,6 +290,9 @@ class GetPackageDynamicParameters {
 
 class FindPackageDynamicParameters {
     [Parameter()]
+    [switch] $Credential
+
+    [Parameter()]
     [string[]] $Tag
 
     [Parameter()]
@@ -305,6 +308,9 @@ class FindPackageDynamicParameters {
 class PublishPackageDynamicParameters {
     [Parameter()]
     [string] $ApiKey
+
+    [Parameter()]
+    [switch] $Credential
 
     [Parameter()]
     [string] $DestinationPath
@@ -348,8 +354,10 @@ class InstallPackageDynamicParameters : InstallUpdateDynamicParameters {
     [Parameter()]
     [switch] $Reinstall
 
-    [Parameter()]
-    [switch] $NoClobber
+    # Install-PSResource -NoClobber fails
+    # https://github.com/PowerShell/PowerShellGet/issues/946
+    # [Parameter()]
+    # [switch] $NoClobber
 }
 
 class SavePackageDynamicParameters : InstallDynamicParameters {

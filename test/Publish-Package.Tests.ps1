@@ -73,4 +73,10 @@ Describe Publish-Package {
             Should -Not -Throw
         }
     }
+
+    Context 'with -Credential parameter' {
+        It 'should publish <_> successfully' -TestCases 'SNMP' -Skip {
+
+        }
+    }
 }
