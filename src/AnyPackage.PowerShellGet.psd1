@@ -12,6 +12,9 @@
     CmdletsToExport = @()
     AliasesToExport = @()
     PrivateData = @{
+        AnyPackage = @{
+            Providers = 'PowerShellGet'
+        }
         PSData = @{
             Tags = @('AnyPackage', 'Provider', 'PowerShellGet', 'Windows', 'Linux', 'MacOS')
             LicenseUri = 'https://github.com/AnyPackage/AnyPackage.PowerShellGet/blob/main/LICENSE'
