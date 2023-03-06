@@ -161,10 +161,10 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $params['Repository'] = $request.Source
         }
 
-        $uninstallParams = @{ }
+        $updateParams = @{ }
 
         $request.DynamicParameters |
-        ConvertTo-Hashtable -Hashtable $uninstallParams -IsBound
+        ConvertTo-Hashtable -Hashtable $updateParams -IsBound
 
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PowerShellGet/issues/666
@@ -172,7 +172,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Select-Object -ExpandProperty Name -Unique |
         Find-PSResource @params |
         Select-Object -ExpandProperty Name -Unique |
-        Update-PSResource @params @uninstallParams -TrustRepository -PassThru |
+        Update-PSResource @params @updateParams -TrustRepository -PassThru |
         Write-Package -Request $request
     }
     #endregion
