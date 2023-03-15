@@ -19,7 +19,7 @@ Describe Find-Package {
     Context 'with -Version parameter' {
         It 'should return value' {
             $package = Find-PSResource -Name AnyPackage
-            Find-Package -Name AnyPackage -Version $package.Version |
+            Find-Package -Name AnyPackage -Version $package.Version.ToString() |
             Should -Not -BeNullOrEmpty
         }
 
