@@ -521,7 +521,8 @@ function Write-Package {
 
         $deps = [List[PackageDependency]]::new()
         foreach ($dep in $resource.Dependencies) {
-            $dependency = [PackageDependency]::new($dep.Name, $dep.VersionRange)
+            $versionRange = [PackageVersionRange]::new($dep.VersionRange, $true)
+            $dependency = [PackageDependency]::new($dep.Name, $versionRange)
             $deps.Add($dependency)
         }
 
@@ -535,7 +536,12 @@ function Write-Package {
         $version = $resource.Version.ToString()
 
         if ($resource.Prerelease) {
-            $version = $version + '-' + $resource.Prerelease
+            # Version property is incorrect for 2 and 3 digits
+            # https://github.com/PowerShell/PowerShellGet/issues/697
+            $version = "{0}.{1}.{2}-{3}" -f $resource.Version.Major,
+                                            $resource.Version.Minor,
+                                            $resource.Version.Build,
+                                            $resource.Prerelease
         }
 
         $request.WritePackage($resource.Name, $version, $resource.Description, $source, $ht, $deps)

@@ -7,7 +7,9 @@
     Copyright = '(c) 2023 Thomas Nieto. All rights reserved.'
     Description = 'PowerShellGet provider for AnyPackage.'
     PowerShellVersion = '5.1'
-    RequiredModules = @('AnyPackage', 'PowerShellGet')
+    RequiredModules = @(
+        @{ ModuleName = 'AnyPackage'; ModuleVersion = '0.4.1' },
+        'PowerShellGet')
     FunctionsToExport = @()
     CmdletsToExport = @()
     AliasesToExport = @()
