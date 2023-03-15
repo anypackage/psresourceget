@@ -8,7 +8,7 @@
     Description = 'PowerShellGet provider for AnyPackage.'
     PowerShellVersion = '5.1'
     RequiredModules = @(
-        @{ ModuleName = 'AnyPackage'; ModuleVersion = '0.4.0' },
+        @{ ModuleName = 'AnyPackage'; ModuleVersion = '0.4.1' },
         'PowerShellGet')
     FunctionsToExport = @()
     CmdletsToExport = @()
