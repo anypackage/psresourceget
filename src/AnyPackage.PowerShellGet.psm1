@@ -521,7 +521,8 @@ function Write-Package {
 
         $deps = [List[PackageDependency]]::new()
         foreach ($dep in $resource.Dependencies) {
-            $dependency = [PackageDependency]::new($dep.Name, $dep.VersionRange)
+            $versionRange = [PackageVersionRange]::new($dep.VersionRange, $true)
+            $dependency = [PackageDependency]::new($dep.Name, $versionRange)
             $deps.Add($dependency)
         }
 
