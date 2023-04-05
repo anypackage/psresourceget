@@ -25,7 +25,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $params -IsBound
 
         Get-PSResource @params |
-        Write-Package -Request $request
+        Write-Package -Request $request -Provider $this.ProviderInfo
     }
     #endregion
 
@@ -53,7 +53,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $resources = $resources | Get-Latest
         }
 
-        $resources | Write-Package -Request $request
+        $resources | Write-Package -Request $request -Provider $this.ProviderInfo
     }
     #endregion
 
@@ -80,7 +80,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Get-Latest |
         Install-PSResource @installParams -TrustRepository -PassThru |
-        Write-Package -Request $request
+        Write-Package -Request $request -Provider $this.ProviderInfo
     }
     #endregion
 
@@ -107,7 +107,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Get-Latest |
         Save-PSResource @saveParams -Path $request.Path -TrustRepository -PassThru |
-        Write-Package -Request $request
+        Write-Package -Request $request -Provider $this.ProviderInfo
     }
     #endregion
 
@@ -135,7 +135,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ForEach-Object {
             try {
                 $_ | Uninstall-PSResource @uninstallParams -ErrorAction Stop
-                $_ | Write-Package -Request $request
+                $_ | Write-Package -Request $request -Provider $this.ProviderInfo
             }
             catch {
                 $_
@@ -170,7 +170,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Select-Object -ExpandProperty Name -Unique |
         Update-PSResource @params @updateParams -TrustRepository -PassThru |
-        Write-Package -Request $request
+        Write-Package -Request $request -Provider $this.ProviderInfo
     }
     #endregion
 
@@ -198,7 +198,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
             Find-PSResource @params |
             Get-Latest |
-            Write-Package -Request $request
+            Write-Package -Request $request -Provider $this.ProviderInfo
         }
         catch {
             throw $_
@@ -209,7 +209,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region Source
     [void] GetSource([SourceRequest] $sourceRequest) {
         Get-PSResourceRepository -Name $sourceRequest.Name |
-        Write-Source -SourceRequest $sourceRequest
+        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
     }
 
     [void] SetSource([SourceRequest] $sourceRequest) {
@@ -230,7 +230,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         Get-PSResourceRepository -Name $sourceRequest.Name |
         Set-PSResourceRepository @params |
-        Write-Source -SourceRequest $sourceRequest
+        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
     }
 
     [void] RegisterSource([SourceRequest] $sourceRequest) {
@@ -251,13 +251,13 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $params -Exclude 'PSGallery' -IsBound
 
         Register-PSResourceRepository @params |
-        Write-Source -SourceRequest $sourceRequest
+        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
     }
 
     [void] UnregisterSource([SourceRequest] $sourceRequest) {
         Get-PSResourceRepository -Name $sourceRequest.Name |
         Unregister-PSResourceRepository -PassThru |
-        Write-Source -SourceRequest $sourceRequest
+        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
     }
     #endregion
 
