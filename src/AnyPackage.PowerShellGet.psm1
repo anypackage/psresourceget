@@ -13,9 +13,6 @@ using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
 class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
 IInstallPackage, ISavePackage, IUninstallPackage,
 IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
-
-    PowerShellGetProvider() : base('c9a39544-274b-4935-9cad-7423e8c47e6b') { }
-
     #region GetPackage
     [void] GetPackage([PackageRequest] $request) {
         $params = @{ Name = $request.Name }
@@ -398,10 +395,11 @@ class RegisterPackageSourceDynamicParameters : SetPackageSourceDynamicParameters
     [switch] $PSGallery
 }
 
-[PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
+[guid] $id = 'c9a39544-274b-4935-9cad-7423e8c47e6b'
+[PackageProviderManager]::RegisterProvider($id, [PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-    [PackageProviderManager]::UnregisterProvider([PowerShellGetProvider])
+    [PackageProviderManager]::UnregisterProvider($id)
 }
 
 function ConvertTo-Hashtable {
@@ -487,15 +485,21 @@ function Write-Source {
 
         [Parameter(Mandatory)]
         [SourceRequest]
-        $SourceRequest
+        $SourceRequest,
+
+        [Parameter(Mandatory)]
+        [PackageProviderInfo]
+        $Provider
     )
 
     process {
-        $SourceRequest.WriteSource($Source.Name,
-                                   $Source.Uri,
-                                   [bool]::Parse($Source.Trusted),
-                                   @{ Priority = $Source.Priority
-                                      CredentialInfo = $Source.CredentialInfo })
+        $source = [PackageSourceInfo]::new($Source.Name,
+                                           $Source.Uri,
+                                           [bool]::Parse($Source.Trusted),
+                                           @{ Priority = $Source.Priority
+                                              CredentialInfo = $Source.CredentialInfo },
+                                            $Provider)
+        $SourceRequest.WriteSource($source)
     }
 }
 
@@ -509,7 +513,11 @@ function Write-Package {
 
         [Parameter(Mandatory)]
         [PackageRequest]
-        $Request
+        $Request,
+
+        [Parameter(Mandatory)]
+        [PackageProviderInfo]
+        $Provider
     )
 
     begin {
@@ -530,20 +538,17 @@ function Write-Package {
         Where-Object Name -eq $Request.Source
 
         if (-not $source) {
-            $source = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
+            $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Provider)
         }
-
-        $version = $resource.Version.ToString()
 
         if ($resource.Prerelease) {
-            # Version property is incorrect for 2 and 3 digits
-            # https://github.com/PowerShell/PowerShellGet/issues/697
-            $version = "{0}.{1}.{2}-{3}" -f $resource.Version.Major,
-                                            $resource.Version.Minor,
-                                            $resource.Version.Build,
-                                            $resource.Prerelease
+            $version = "{0}-{1}" -f $resource.Version, $resource.Prerelease
+        }
+        else {
+            $version = $resource.Version
         }
 
-        $request.WritePackage($resource.Name, $version, $resource.Description, $source, $ht, $deps)
+        $package = [PackageInfo]::new($resource.Name, $version, $source, $resource.Description, $deps, $ht, $Provider)
+        $Request.WritePackage($package)
     }
 }
