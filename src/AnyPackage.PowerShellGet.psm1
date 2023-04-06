@@ -527,9 +527,11 @@ function Write-Package {
         }
 
         $source = $sources |
-        Where-Object Name -eq $Request.Source
+        Where-Object Name -eq $resource.Repository
 
-        if (-not $source) {
+        # Blank RepositorySourceLocation
+        # https://github.com/PowerShell/PowerShellGet/issues/1052
+        if (-not $source -and $resource.RepositorySourceLocation) {
             $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Request.ProviderInfo)
         }
 
