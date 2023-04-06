@@ -13,12 +13,12 @@ using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
 class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
 IInstallPackage, ISavePackage, IUninstallPackage,
 IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
-
-    PowerShellGetProvider() : base('c9a39544-274b-4935-9cad-7423e8c47e6b') { }
-
     #region GetPackage
     [void] GetPackage([PackageRequest] $request) {
-        $params = @{ Name = $request.Name }
+        $params = @{
+            Name        = $request.Name
+            ErrorAction = 'SilentlyContinue'
+        }
 
         if ($request.Version) {
             $params['Version'] = $request.Version
@@ -35,8 +35,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region FindPackage
     [void] FindPackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -63,8 +64,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region InstallPackage
     [void] InstallPackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -90,8 +92,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region SavePackage
     [void] SavePackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -117,7 +120,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region UninstallPackage
     [void] UninstallPackage([PackageRequest] $request) {
         $params = @{
-            Name = $request.Name
+            Name        = $request.Name
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -150,7 +154,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region UpdatePackage
     [void] UpdatePackage([PackageRequest] $request) {
         $params = @{
-            Prerelease = $request.Prerelease
+            Prerelease  = $request.Prerelease
         }
 
         if ($request.Version) {
@@ -168,9 +172,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PowerShellGet/issues/666
-        Get-PSResource -Name $request.Name |
+        Get-PSResource -Name $request.Name -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
-        Find-PSResource @params |
+        Find-PSResource @params -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
         Update-PSResource @params @updateParams -TrustRepository -PassThru |
         Write-Package -Request $request
@@ -398,10 +402,11 @@ class RegisterPackageSourceDynamicParameters : SetPackageSourceDynamicParameters
     [switch] $PSGallery
 }
 
-[PackageProviderManager]::RegisterProvider([PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
+[guid] $id = 'c9a39544-274b-4935-9cad-7423e8c47e6b'
+[PackageProviderManager]::RegisterProvider($id, [PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
-    [PackageProviderManager]::UnregisterProvider([PowerShellGetProvider])
+    [PackageProviderManager]::UnregisterProvider($id)
 }
 
 function ConvertTo-Hashtable {
@@ -491,11 +496,13 @@ function Write-Source {
     )
 
     process {
-        $SourceRequest.WriteSource($Source.Name,
-                                   $Source.Uri,
-                                   [bool]::Parse($Source.Trusted),
-                                   @{ Priority = $Source.Priority
-                                      CredentialInfo = $Source.CredentialInfo })
+        $sourceInfo = [PackageSourceInfo]::new($Source.Name,
+                                           $Source.Uri,
+                                           [bool]::Parse($Source.Trusted),
+                                           @{ Priority = $Source.Priority
+                                              CredentialInfo = $Source.CredentialInfo },
+                                            $SourceRequest.ProviderInfo)
+        $SourceRequest.WriteSource($sourceInfo)
     }
 }
 
@@ -527,23 +534,22 @@ function Write-Package {
         }
 
         $source = $sources |
-        Where-Object Name -eq $Request.Source
+        Where-Object Name -eq $resource.Repository
 
-        if (-not $source) {
-            $source = $request.NewSourceInfo($resource.Repository, $resource.RepositorySourceLocation, $false, $null)
+        # Blank RepositorySourceLocation
+        # https://github.com/PowerShell/PowerShellGet/issues/1052
+        if (-not $source -and $resource.RepositorySourceLocation) {
+            $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Request.ProviderInfo)
         }
-
-        $version = $resource.Version.ToString()
 
         if ($resource.Prerelease) {
-            # Version property is incorrect for 2 and 3 digits
-            # https://github.com/PowerShell/PowerShellGet/issues/697
-            $version = "{0}.{1}.{2}-{3}" -f $resource.Version.Major,
-                                            $resource.Version.Minor,
-                                            $resource.Version.Build,
-                                            $resource.Prerelease
+            $version = "{0}-{1}" -f $resource.Version, $resource.Prerelease
+        }
+        else {
+            $version = $resource.Version
         }
 
-        $request.WritePackage($resource.Name, $version, $resource.Description, $source, $ht, $deps)
+        $package = [PackageInfo]::new($resource.Name, $version, $source, $resource.Description, $deps, $ht, $Request.ProviderInfo)
+        $Request.WritePackage($package)
     }
 }

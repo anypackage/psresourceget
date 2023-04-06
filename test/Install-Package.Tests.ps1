@@ -65,7 +65,9 @@ Describe Install-Package {
 
     Context 'with -Prerelease parameter' {
         AfterAll {
-            Uninstall-PSResource -Name Microsoft.PowerShell.Archive -Version '[2.0,2.0.1)'
+            Get-PSResource -Name Microsoft.PowerShell.Archive -Version '(1.9,2.0.1)' |
+            Where-Object IsPrerelease |
+            Uninstall-PSResource
         }
 
         It 'should install <_> sucessfully' -TestCases 'Microsoft.PowerShell.Archive' {
