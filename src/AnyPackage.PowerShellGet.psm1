@@ -25,7 +25,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $params -IsBound
 
         Get-PSResource @params |
-        Write-Package -Request $request -Provider $this.ProviderInfo
+        Write-Package -Request $request
     }
     #endregion
 
@@ -53,7 +53,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
             $resources = $resources | Get-Latest
         }
 
-        $resources | Write-Package -Request $request -Provider $this.ProviderInfo
+        $resources | Write-Package -Request $request
     }
     #endregion
 
@@ -80,7 +80,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Get-Latest |
         Install-PSResource @installParams -TrustRepository -PassThru |
-        Write-Package -Request $request -Provider $this.ProviderInfo
+        Write-Package -Request $request
     }
     #endregion
 
@@ -107,7 +107,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Get-Latest |
         Save-PSResource @saveParams -Path $request.Path -TrustRepository -PassThru |
-        Write-Package -Request $request -Provider $this.ProviderInfo
+        Write-Package -Request $request
     }
     #endregion
 
@@ -135,7 +135,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ForEach-Object {
             try {
                 $_ | Uninstall-PSResource @uninstallParams -ErrorAction Stop
-                $_ | Write-Package -Request $request -Provider $this.ProviderInfo
+                $_ | Write-Package -Request $request
             }
             catch {
                 $_
@@ -170,7 +170,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         Find-PSResource @params |
         Select-Object -ExpandProperty Name -Unique |
         Update-PSResource @params @updateParams -TrustRepository -PassThru |
-        Write-Package -Request $request -Provider $this.ProviderInfo
+        Write-Package -Request $request
     }
     #endregion
 
@@ -198,7 +198,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
             Find-PSResource @params |
             Get-Latest |
-            Write-Package -Request $request -Provider $this.ProviderInfo
+            Write-Package -Request $request
         }
         catch {
             throw $_
@@ -209,7 +209,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region Source
     [void] GetSource([SourceRequest] $sourceRequest) {
         Get-PSResourceRepository -Name $sourceRequest.Name |
-        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
+        Write-Source -SourceRequest $sourceRequest
     }
 
     [void] SetSource([SourceRequest] $sourceRequest) {
@@ -230,7 +230,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         Get-PSResourceRepository -Name $sourceRequest.Name |
         Set-PSResourceRepository @params |
-        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
+        Write-Source -SourceRequest $sourceRequest
     }
 
     [void] RegisterSource([SourceRequest] $sourceRequest) {
@@ -251,13 +251,13 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $params -Exclude 'PSGallery' -IsBound
 
         Register-PSResourceRepository @params |
-        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
+        Write-Source -SourceRequest $sourceRequest
     }
 
     [void] UnregisterSource([SourceRequest] $sourceRequest) {
         Get-PSResourceRepository -Name $sourceRequest.Name |
         Unregister-PSResourceRepository -PassThru |
-        Write-Source -SourceRequest $sourceRequest -Provider $this.ProviderInfo
+        Write-Source -SourceRequest $sourceRequest
     }
     #endregion
 
@@ -485,21 +485,17 @@ function Write-Source {
 
         [Parameter(Mandatory)]
         [SourceRequest]
-        $SourceRequest,
-
-        [Parameter(Mandatory)]
-        [PackageProviderInfo]
-        $Provider
+        $SourceRequest
     )
 
     process {
-        $source = [PackageSourceInfo]::new($Source.Name,
+        $sourceInfo = [PackageSourceInfo]::new($Source.Name,
                                            $Source.Uri,
                                            [bool]::Parse($Source.Trusted),
                                            @{ Priority = $Source.Priority
                                               CredentialInfo = $Source.CredentialInfo },
-                                            $Provider)
-        $SourceRequest.WriteSource($source)
+                                            $SourceRequest.ProviderInfo)
+        $SourceRequest.WriteSource($sourceInfo)
     }
 }
 
@@ -513,11 +509,7 @@ function Write-Package {
 
         [Parameter(Mandatory)]
         [PackageRequest]
-        $Request,
-
-        [Parameter(Mandatory)]
-        [PackageProviderInfo]
-        $Provider
+        $Request
     )
 
     begin {
@@ -538,7 +530,7 @@ function Write-Package {
         Where-Object Name -eq $Request.Source
 
         if (-not $source) {
-            $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Provider)
+            $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Request.ProviderInfo)
         }
 
         if ($resource.Prerelease) {
@@ -548,7 +540,7 @@ function Write-Package {
             $version = $resource.Version
         }
 
-        $package = [PackageInfo]::new($resource.Name, $version, $source, $resource.Description, $deps, $ht, $Provider)
+        $package = [PackageInfo]::new($resource.Name, $version, $source, $resource.Description, $deps, $ht, $Request.ProviderInfo)
         $Request.WritePackage($package)
     }
 }
