@@ -56,10 +56,9 @@ Describe Find-Package {
             Should -Be Test
         }
 
-        # https://github.com/PowerShell/PowerShellGet/issues/722
         It 'file based repository should fail with wildcard' {
             Find-Package -Name * -Source Test |
-            Should -BeNullOrEmpty
+            Should -Not -BeNullOrEmpty
         }
     }
 

@@ -15,7 +15,10 @@ IInstallPackage, ISavePackage, IUninstallPackage,
 IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region GetPackage
     [void] GetPackage([PackageRequest] $request) {
-        $params = @{ Name = $request.Name }
+        $params = @{
+            Name        = $request.Name
+            ErrorAction = 'SilentlyContinue'
+        }
 
         if ($request.Version) {
             $params['Version'] = $request.Version
@@ -32,8 +35,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region FindPackage
     [void] FindPackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -60,8 +64,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region InstallPackage
     [void] InstallPackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -87,8 +92,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region SavePackage
     [void] SavePackage([PackageRequest] $request) {
         $params = @{
-            Name       = $request.Name
-            Prerelease = $request.Prerelease
+            Name        = $request.Name
+            Prerelease  = $request.Prerelease
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -114,7 +120,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region UninstallPackage
     [void] UninstallPackage([PackageRequest] $request) {
         $params = @{
-            Name = $request.Name
+            Name        = $request.Name
+            ErrorAction = 'SilentlyContinue'
         }
 
         if ($request.Version) {
@@ -147,7 +154,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region UpdatePackage
     [void] UpdatePackage([PackageRequest] $request) {
         $params = @{
-            Prerelease = $request.Prerelease
+            Prerelease  = $request.Prerelease
         }
 
         if ($request.Version) {
@@ -165,9 +172,9 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PowerShellGet/issues/666
-        Get-PSResource -Name $request.Name |
+        Get-PSResource -Name $request.Name -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
-        Find-PSResource @params |
+        Find-PSResource @params -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
         Update-PSResource @params @updateParams -TrustRepository -PassThru |
         Write-Package -Request $request
