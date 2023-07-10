@@ -72,15 +72,15 @@ Describe Update-Package {
 
     Context 'with -Prerelease parameter' {
         BeforeAll {
-            Install-PSResource -Name Microsoft.PowerShell.Archive -Version 1.0.1 -TrustRepository
+            Install-PSResource -Name PSReadLine -Version 1.0.1 -TrustRepository
         }
 
         AfterAll {
-            Uninstall-PSResource -Name Microsoft.PowerShell.Archive
+            Uninstall-PSResource -Name PSReadLine
         }
 
-        It 'should update <_> successfully' -TestCases 'Microsoft.PowerShell.Archive' {
-            $package = Update-Package -Name $_ -Version '[2.0,2.0.1)' -Prerelease -PassThru
+        It 'should update <_> successfully' -TestCases 'PSReadLine' {
+            $package = Update-Package -Name $_ -Version '(2.0,2.1)' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
         }

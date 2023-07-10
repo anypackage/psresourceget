@@ -64,17 +64,17 @@ Describe Find-Package {
 
     Context 'with -Prerelease parameter' {
         It 'should return prerelease versions' {
-            Find-Package -Name Microsoft.PowerShell.Archive -Version * -Prerelease |
+            Find-Package -Name PSReadLine -Version * -Prerelease |
             Where-Object { $_.Version.IsPrerelease } |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Latest parameter' {
-        It 'should return latest version for <_> version range' -TestCases '[1.0,2.0]' {
-            $resource = Find-PSResource -Name Microsoft.PowerShell.Archive -Version $_ |
+        It 'should return latest version for <_> version range' -TestCases '[2.0,2.2]' {
+            $resource = Find-PSResource -Name PSReadLine -Version $_ |
             Select-Object -First 1
-            $package = Find-Package -Name Microsoft.PowerShell.Archive -Version $_ -Provider PSResourceGet -Latest
+            $package = Find-Package -Name PSReadLine -Version $_ -Provider PSResourceGet -Latest
 
             $package.Version.ToString() | Should -Be $resource.Version.ToString()
         }
