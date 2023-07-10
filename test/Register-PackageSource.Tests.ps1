@@ -9,8 +9,12 @@ Describe Register-PackageSource {
             Write-Verbose -Message 'PSGallery already exists.'
         }
 
-        Get-PSResourceRepository -Name Test -ErrorAction Ignore |
-        Unregister-PSResourceRepository
+        try {
+            Unregister-PSResourceRepository -Name Test
+        }
+        catch {
+            Write-Verbose -Message 'Test not registered.'
+        }
     }
 
     Context 'with -Uri parameter' {
