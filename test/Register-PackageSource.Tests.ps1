@@ -8,10 +8,8 @@ Describe Register-PackageSource {
         catch {
             Write-Verbose -Message 'PSGallery already exists.'
         }
-    }
 
-    AfterEach {
-        Get-PSResourceRepository -Name Test |
+        Get-PSResourceRepository -Name Test -ErrorAction Ignore |
         Unregister-PSResourceRepository
     }
 
