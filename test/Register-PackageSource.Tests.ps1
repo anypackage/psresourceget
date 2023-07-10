@@ -1,6 +1,6 @@
 #requires -modules AnyPackage.PSResourceGet
 
-Describe Register-Package {
+Describe Register-PackageSource {
     AfterEach {
         try {
             Register-PSResourceRepository -PSGallery
@@ -11,7 +11,8 @@ Describe Register-Package {
     }
 
     AfterEach {
-        Unregister-PSResourceRepository -Name Test -ErrorAction Ignore
+        Get-PSResourceRepository -Name Test |
+        Unregister-PSResourceRepository
     }
 
     Context 'with -Uri parameter' {
