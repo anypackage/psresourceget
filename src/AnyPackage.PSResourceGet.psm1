@@ -27,7 +27,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         $request.DynamicParameters |
         ConvertTo-Hashtable -Hashtable $params -IsBound
 
-        Get-PSResource @params |
+        Get-InstalledPSResource @params |
         Write-Package -Request $request
     }
     #endregion
@@ -138,7 +138,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         # Prerelease parameter causes it to silently fail
         # https://github.com/PowerShell/PSResourceGet/issues/842
-        Get-PSResource @params |
+        Get-InstalledPSResource @params |
         ForEach-Object {
             try {
                 $_ | Uninstall-PSResource @uninstallParams -ErrorAction Stop
@@ -172,7 +172,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         # Find-PSResource pipeline input
         # https://github.com/PowerShell/PSResourceGet/issues/666
-        Get-PSResource -Name $request.Name -ErrorAction SilentlyContinue |
+        Get-InstalledPSResource -Name $request.Name -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
         Find-PSResource @params -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |

@@ -19,7 +19,7 @@ Describe Get-Package {
 
     Context 'with -Name parameter' {
         It 'should return results for <_>' -TestCases 'SNMP', @('PSWindowsUpdate', 'DellBIOSProvider'), '*win*' {
-            $resources = Get-PSResource -Name $_
+            $resources = Get-InstalledPSResource -Name $_
             $results = Get-Package -Name $_
 
             $results | Should -Not -BeNullOrEmpty
@@ -32,7 +32,7 @@ Describe Get-Package {
         }
 
         It 'should have correct properties for <_>' -TestCases 'SNMP' {
-            $resource = Get-PSResource -Name $_
+            $resource = Get-InstalledPSResource -Name $_
             $package = Get-Package -Name $_
 
             if ($resource.Prerelease) {
@@ -65,7 +65,7 @@ Describe Get-Package {
                                                                           '(0.2.0,0.3.0]',
                                                                           '(0.2.0,0.3.0)',
                                                                           '[0.2.0,0.3.0)' {
-            $resources = Get-PSResource -Name Cobalt -Version $_
+            $resources = Get-InstalledPSResource -Name Cobalt -Version $_
 
             Get-Package -Name Cobalt -Version $_ |
             Should -HaveCount $resources.Count
