@@ -55,7 +55,7 @@ Describe Save-Package {
         BeforeAll {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
             New-Item -Path $path/repo -ItemType Directory
-            Register-PSResourceRepository -Name Test -Uri $path/repo -Trusted -Force
+            Register-PSResourceRepository -Name Test -Uri $path/repo -Trusted
             Save-PSResource -Name AnyPackage, SNMP -Path $path/repo -TrustRepository -AsNupkg
         }
 
@@ -64,7 +64,9 @@ Describe Save-Package {
         }
 
         It 'should save <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery' },
-                                                                    @{ Name = 'AnyPackage'; Source = 'PSGallery'} {
+                                                                    @{ Name = 'AnyPackage'; Source = 'Test'} {
+
+            Get-ChildItem -Path "$(Get-PSDrive TestDrive | Select-Object -ExpandProperty Root)/repo"
             $savePackageParams = @{
                 Name = $Name
                 Source = $Source
