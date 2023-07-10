@@ -38,8 +38,8 @@ Describe Save-Package {
     Context 'with -Prerelease parameter' {
         It 'should save' {
             $savePackageParams = @{
-                Name = 'Microsoft.PowerShell.Archive'
-                Version = '[2.0.0,2.0.1)'
+                Name = 'PSReadLine'
+                Version = '2.0.0-rc2'
                 Prerelease = $true
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true

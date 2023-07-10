@@ -72,7 +72,7 @@ Describe Update-Package {
 
     Context 'with -Prerelease parameter' {
         BeforeAll {
-            Install-PSResource -Name PSReadLine -Version 1.0.1 -TrustRepository
+            Install-PSResource -Name PSReadLine -Version 1.2 -TrustRepository
         }
 
         AfterAll {
@@ -80,7 +80,7 @@ Describe Update-Package {
         }
 
         It 'should update <_> successfully' -TestCases 'PSReadLine' {
-            $package = Update-Package -Name $_ -Version '(2.0,2.1)' -Prerelease -PassThru
+            $package = Update-Package -Name $_ -Version '2.0.0-rc2' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
         }

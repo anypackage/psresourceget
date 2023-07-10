@@ -65,13 +65,13 @@ Describe Install-Package {
 
     Context 'with -Prerelease parameter' {
         AfterAll {
-            Get-InstalledPSResource -Name PSReadLine -Version '(2.0,2.1)' |
+            Get-InstalledPSResource -Name PSReadLine -Version '2.0.0-rc2' |
             Where-Object IsPrerelease |
             Uninstall-PSResource
         }
 
-        It 'should install <_> sucessfully' -TestCases 'PSReadLine' {
-            $package = Install-Package -Name $_ -Version '(2.0,2.1)' -Prerelease -PassThru
+        It 'should install <_> successfully' -TestCases 'PSReadLine' {
+            $package = Install-Package -Name $_ -Version '2.0.0-rc2' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
         }
