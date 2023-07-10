@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Install-Package {
     AfterEach {
@@ -58,7 +58,7 @@ Describe Install-Package {
 
     Context 'with -Scope parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -79,7 +79,7 @@ Describe Install-Package {
 
     Context 'with -AuthenticodeCheck parameter' {
         It 'should install <_> successfully' -TestCases 'Microsoft.PowerShell.Archive' {
-            Install-Package -Name $_ -Provider PowerShellGet -AuthenticodeCheck -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -AuthenticodeCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -92,7 +92,7 @@ Describe Install-Package {
 
     Context 'with -SkipDependencyCheck parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -SkipDependencyCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -100,30 +100,30 @@ Describe Install-Package {
     Context 'with -TemporaryPath parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-            Install-Package -Name $_ -Provider PowerShellGet -TemporaryPath $path -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -TemporaryPath $path -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -NoClobber parameter' {
         # Install-PSResource -NoClobber fails
-        # https://github.com/PowerShell/PowerShellGet/issues/946
+        # https://github.com/PowerShell/PSResourceGet/issues/946
         It 'should install <_> successfully' -TestCases 'SNMP' -Skip {
-            Install-Package -Name $_ -Provider PowerShellGet -NoClobber -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -NoClobber -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -AcceptLicense parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -AcceptLicense -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -AcceptLicense -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Reinstall parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -Reinstall -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -Reinstall -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }

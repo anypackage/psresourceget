@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Publish-Package {
     BeforeAll {
@@ -13,7 +13,7 @@ Describe Publish-Package {
 
     Context 'with -Path parameter' {
         It 'should publish <_> to local repository' -TestCases 'SNMP' {
-            # https://github.com/PowerShell/PowerShellGet/issues/940
+            # https://github.com/PowerShell/PSResourceGet/issues/940
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
             Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 
@@ -26,7 +26,7 @@ Describe Publish-Package {
 
     Context 'with -DestinationPath parameter' {
         It 'should publish and create nupkg' -TestCases 'SNMP' {
-            # https://github.com/PowerShell/PowerShellGet/issues/940
+            # https://github.com/PowerShell/PSResourceGet/issues/940
             $testRoot = Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root
             Save-PSResource -Name $_ -Path $testRoot -TrustRepository
 

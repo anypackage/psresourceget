@@ -1,5 +1,5 @@
 @{
-    FilePath = @('AnyPackage.PowerShellGet.psd1', 'AnyPackage.PowerShellGet.psm1')
+    FilePath = @('AnyPackage.PSResourceGet.psd1', 'AnyPackage.PSResourceGet.psm1')
     TimeStampServer = 'http://timestamp.sectigo.com'
     HashAlgorithm = 'SHA256'
 }

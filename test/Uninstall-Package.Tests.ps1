@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Uninstall-Package {
     BeforeEach {
@@ -41,21 +41,21 @@ Describe Uninstall-Package {
 
     Context 'with -Scope parameter' {
         It 'should uninstall <_> successfully' -TestCases 'SNMP' {
-            Uninstall-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+            Uninstall-Package -Name $_ -Provider PSResourceGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -SkipDependencyCheck' {
         It 'should uninstall <_> successfully' -TestCases 'SNMP' {
-            Uninstall-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+            Uninstall-Package -Name $_ -Provider PSResourceGet -SkipDependencyCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Scope' {
         It 'should uninstall <_> successfully' -TestCases 'SNMP' {
-            Uninstall-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+            Uninstall-Package -Name $_ -Provider PSResourceGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }

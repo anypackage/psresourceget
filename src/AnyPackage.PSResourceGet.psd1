@@ -1,26 +1,26 @@
 @{
-    RootModule = 'AnyPackage.PowerShellGet.psm1'
+    RootModule = 'AnyPackage.PSResourceGet.psm1'
     ModuleVersion = '0.2.4'
     CompatiblePSEditions = @('Desktop', 'Core')
-    GUID = 'cc680200-a0c8-40df-a004-64c3899a72c9'
+    GUID = '4ffeffd3-7f83-4655-ac94-19eb41ebc792'
     Author = 'Thomas Nieto'
     Copyright = '(c) 2023 Thomas Nieto. All rights reserved.'
-    Description = 'PowerShellGet provider for AnyPackage.'
+    Description = 'PSResourceGet provider for AnyPackage.'
     PowerShellVersion = '5.1'
     RequiredModules = @(
         @{ ModuleName = 'AnyPackage'; ModuleVersion = '0.5.1' },
-        'PowerShellGet')
+        'Microsoft.PowerShell.PSResourceGet')
     FunctionsToExport = @()
     CmdletsToExport = @()
     AliasesToExport = @()
     PrivateData = @{
         AnyPackage = @{
-            Providers = 'PowerShellGet'
+            Providers = 'PSResourceGet'
         }
         PSData = @{
-            Tags = @('AnyPackage', 'Provider', 'PowerShellGet', 'Windows', 'Linux', 'MacOS')
-            LicenseUri = 'https://github.com/anypackage/powershellget/blob/main/LICENSE'
-            ProjectUri = 'https://github.com/anypackage/powershellget'
+            Tags = @('AnyPackage', 'Provider', 'PSResourceGet', 'Windows', 'Linux', 'MacOS')
+            LicenseUri = 'https://github.com/anypackage/psresourceget/blob/main/LICENSE'
+            ProjectUri = 'https://github.com/anypackage/psresourceget'
         }
     }
     HelpInfoUri = 'https://go.anypackage.dev/help'

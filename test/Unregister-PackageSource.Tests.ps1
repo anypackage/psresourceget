@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Unregister-PackageSource {
     BeforeEach {

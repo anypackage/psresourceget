@@ -1,6 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
-
-using namespace NuGet.Versioning
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Get-Package {
     BeforeAll {

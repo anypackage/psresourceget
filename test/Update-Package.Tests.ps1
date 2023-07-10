@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Update-Package {
     BeforeEach {
@@ -42,7 +42,7 @@ Describe Update-Package {
                                                               '[0.1.0]',
                                                               '[0.2.0,]',
                                                               '(0.1.0,)',
-                                                              #'(,0.3.0)', https://github.com/PowerShell/PowerShellGet/issues/943
+                                                              #'(,0.3.0)', https://github.com/PowerShell/PSResourceGet/issues/943
                                                               '(0.2.0,0.3.0]',
                                                               '(0.2.0,0.3.0)',
                                                               '[0.2.0,0.3.0)' {
@@ -79,7 +79,7 @@ Describe Update-Package {
             Uninstall-PSResource -Name Microsoft.PowerShell.Archive
         }
 
-        It 'should update <_> sucessfully' -TestCases 'Microsoft.PowerShell.Archive' {
+        It 'should update <_> successfully' -TestCases 'Microsoft.PowerShell.Archive' {
             $package = Update-Package -Name $_ -Version '[2.0,2.0.1)' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
@@ -88,7 +88,7 @@ Describe Update-Package {
 
     Context 'with -AcceptLicense parameter' {
         It 'should update <_> successfully' -TestCases 'SNMP' {
-            Update-Package -Name $_ -Provider PowerShellGet -AcceptLicense -PassThru |
+            Update-Package -Name $_ -Provider PSResourceGet -AcceptLicense -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -99,24 +99,24 @@ Describe Update-Package {
         }
     }
 
-    Context 'with -TemporaryPath paramter' {
+    Context 'with -TemporaryPath parameter' {
         It 'should update <_> successfully' -TestCases 'SNMP' {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-            Update-Package -Name $_ -Provider PowerShellGet -TemporaryPath $path -PassThru |
+            Update-Package -Name $_ -Provider PSResourceGet -TemporaryPath $path -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Scope parameter' {
         It 'should update <_> successfully' -TestCases 'SNMP' {
-            Update-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+            Update-Package -Name $_ -Provider PSResourceGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -SkipDependencyCheck' {
         It 'should update <_> successfully' -TestCases 'SNMP' {
-            Update-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+            Update-Package -Name $_ -Provider PSResourceGet -SkipDependencyCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }

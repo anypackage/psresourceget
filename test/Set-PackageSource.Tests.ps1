@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Set-PackageSource {
     BeforeAll {
@@ -33,7 +33,7 @@ Describe Set-PackageSource {
         It 'should have priority <_>' -TestCases 10 {
             $registerPackageSourceParams = @{
                 Name = 'Test'
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 Priority = $_
             }
@@ -49,7 +49,7 @@ Describe Set-PackageSource {
 
             $registerPackageSourceParams = @{
                 Name = 'Test'
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 CredentialInfo = $_
             }

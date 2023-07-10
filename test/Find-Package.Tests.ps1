@@ -1,8 +1,8 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Find-Package {
     Context 'with -Name parameter' {
-        It 'should return results for <_>' -TestCases 'PSReadline', @('PSReadline', 'PowerShellGet'), 'AnyPackage*'  {
+        It 'should return results for <_>' -TestCases 'PSReadLine', @('PSReadLine', 'Microsoft.PowerShell.Archive'), 'AnyPackage*'  {
             $resources = Find-PSResource -Name $_
             $results = Find-Package -Name $_
 
@@ -64,7 +64,7 @@ Describe Find-Package {
 
     Context 'with -Prerelease parameter' {
         It 'should return prerelease versions' {
-            Find-Package -Name PowerShellGet -Version * -Prerelease |
+            Find-Package -Name Microsoft.PowerShell.Archive -Version * -Prerelease |
             Where-Object { $_.Version.IsPrerelease } |
             Should -Not -BeNullOrEmpty
         }
@@ -72,9 +72,9 @@ Describe Find-Package {
 
     Context 'with -Latest parameter' {
         It 'should return latest version for <_> version range' -TestCases '[1.0,2.0]' {
-            $resource = Find-PSResource -Name PowerShellGet -Version $_ |
+            $resource = Find-PSResource -Name Microsoft.PowerShell.Archive -Version $_ |
             Select-Object -First 1
-            $package = Find-Package -Name PowerShellGet -Version $_ -Provider PowerShellGet -Latest
+            $package = Find-Package -Name Microsoft.PowerShell.Archive -Version $_ -Provider PSResourceGet -Latest
 
             $package.Version.ToString() | Should -Be $resource.Version.ToString()
         }

@@ -40,14 +40,14 @@ jobs:
       - name: Install AnyPackage
         run: Install-Module AnyPackage -Force -AllowClobber
 
-      - name: Install PowerShellGet
-        run: Install-Module PowerShellGet -AllowPrerelease -Force -AllowClobber
+      - name: Install PSResourceGet
+        run: Install-Module Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Force -AllowClobber
 
       - name: Download module
         uses: actions/download-artifact@v3
         with:
           name: module
-          path: AnyPackage.PowerShellGet
+          path: AnyPackage.PSResourceGet
 
       - name: Move module
         run: |
@@ -57,7 +57,7 @@ jobs:
             $path = "$HOME/.local/share/powershell/Modules"
           }
 
-          Move-Item AnyPackage.PowerShellGet $path
+          Move-Item AnyPackage.PSResourceGet $path
 
       - name: Test with Pester
         run: |
@@ -100,7 +100,7 @@ jobs:
       - name: Create and sign catalog file
         run: |
           $config = Import-PowerShellDataFile SignSettings.psd1
-          $config['FilePath'] = 'AnyPackage.PowerShellGet.cat'
+          $config['FilePath'] = 'AnyPackage.PSResourceGet.cat'
           $config['Certificate'] = Get-ChildItem Cert:\CurrentUser\My -CodeSigningCert
           Set-Location .\module
           New-FileCatalog $config['FilePath'] -CatalogVersion 2
@@ -122,7 +122,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: module-signed
-          path: '~/.local/share/powershell/Modules/AnyPackage.PowerShellGet'
+          path: '~/.local/share/powershell/Modules/AnyPackage.PSResourceGet'
 
       - name: Install AnyPackage
         run: Install-Module AnyPackage -Force -AllowClobber
@@ -130,4 +130,4 @@ jobs:
       - name: Publish Module
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        run: Publish-Module -Name AnyPackage.PowerShellGet -NuGetApiKey $env:NUGET_KEY
+        run: Publish-Module -Name AnyPackage.PSResourceGet -NuGetApiKey $env:NUGET_KEY

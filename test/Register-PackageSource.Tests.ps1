@@ -1,7 +1,4 @@
-#requires -modules AnyPackage.PowerShellGet
-
-using module PowerShellGet
-using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
+#requires -modules AnyPackage.PSResourceGet
 
 Describe Register-Package {
     AfterEach {
@@ -24,7 +21,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
             }
 
@@ -41,7 +38,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 Trusted = $true
                 PassThru = $true
             }
@@ -58,7 +55,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 Trusted = $false
                 PassThru = $true
             }
@@ -77,7 +74,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 Priority = $_
             }
@@ -104,7 +101,7 @@ Describe Register-Package {
 
         It 'should register' {
             $registerPackageSourceParams = @{
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 PSGallery = $true
             }
@@ -121,7 +118,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 CredentialInfo = $_
             }
