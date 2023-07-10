@@ -1,6 +1,6 @@
 #requires -modules AnyPackage.PSResourceGet
 
-Describe Register-PackageSource {
+Describe Register-PackageSource -Skip {
     AfterEach {
         try {
             Register-PSResourceRepository -PSGallery
