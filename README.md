@@ -1,27 +1,27 @@
-# AnyPackage.PowerShellGet
+# AnyPackage.PSResourceGet
 
-AnyPackage.PowerShellGet is an AnyPackage provider that facilitates installing PowerShellGet v3 resources from NuGet repositories.
+AnyPackage.PSResourceGet is an AnyPackage provider that facilitates installing PSResourceGet resources from NuGet repositories.
 
 ## Documentation
 
-AnyPackage.PowerShellGet documentation is located in [Provider Catalog](https://www.anypackage.dev/docs/provider-catalog/powershellget/about_PowerShellGet_Provider) on how to use the provider and what dynamic parameters exist.
+AnyPackage.PSResourceGet documentation is located in [Provider Catalog](https://www.anypackage.dev/docs/provider-catalog/psresourceget/about_PSResourceGet_Provider) on how to use the provider and what dynamic parameters exist.
 
-## Install AnyPackage.PowerShellGet
+## Install AnyPackage.PSResourceGet
 
-> NOTE! PowerShellGet v3 is required.
-Due to a PowerShellGet issue, prerelease modules cannot be defined as dependencies, so manual installation of PowerShellGet v3 is required.
+> NOTE! Microsoft.PowerShell.PSResourceGet is required.
+Due to a PSResourceGet issue, prerelease modules cannot be defined as dependencies, so manual installation of PSResourceGet is required.
 
 ```PowerShell
-# Install PowerShellGet v3
-Install-Module PowerShellGet -AllowPrerelease -AllowClobber -Force
+# Install Microsoft.PowerShell.PSResourceGet
+Install-Module Microsoft.PowerShell.PSResourceGet -AllowPrerelease -AllowClobber -Force
 
-Install-Module AnyPackage.PowerShellGet
+Install-Module AnyPackage.PSResourceGet
 ```
 
-## Import AnyPackage.PowerShellGet
+## Import AnyPackage.PSResourceGet
 
 ```PowerShell
-Import-Module AnyPackage.PowerShellGet
+Import-Module AnyPackage.PSResourceGet
 ```
 
 ## Sample usages
@@ -81,7 +81,7 @@ Publish-Package -Path C:\Temp\module\module.psd1
 ### Manage official package sources
 
 ```PowerShell
-Register-PackageSource -Provider PowerShellGet -PSGallery
+Register-PackageSource -Provider PSResourceGet -PSGallery
 Find-Package -Name Scoop | Install-Package
 Unregister-PackageSource -Name PSGallery
 ```
@@ -96,7 +96,7 @@ Unregister-PackageSource -Name Test
 
 ## Known Issues
 
-### Missing PowerShellGet parameters
+### Missing PSResourceGet parameters
 
 There are a few missing dynamic parameters:
 

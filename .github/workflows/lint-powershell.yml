@@ -32,12 +32,12 @@ jobs:
       - name: Install ConvertToSARIF
         run: Install-Module ConvertToSARIF -Force
 
-      - name: Install PowerShellGet
-        run: Install-Module PowerShellGet -Force -AllowClobber -AllowPrerelease
+      - name: Install Microsoft.PowerShell.PSResourceGet
+        run: Install-Module Microsoft.PowerShell.PSResourceGet -Force -AllowClobber -AllowPrerelease
 
       - name: Run PSScriptAnalyzer
         run: |
-          Import-Module AnyPackage, ConvertToSARIF, PowerShellGet -PassThru
+          Import-Module AnyPackage, ConvertToSARIF, Microsoft.PowerShell.PSResourceGet -PassThru
           Invoke-ScriptAnalyzer -Path . -Recurse | ConvertTo-SARIF -FilePath results.sarif
 
       - name: Upload SARIF results file

@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Get-PackageSource {
     BeforeAll {
@@ -11,7 +11,7 @@ Describe Get-PackageSource {
         Unregister-PSResourceRepository -Name Test
     }
 
-    Context 'with no additonal parameters' {
+    Context 'with no additional parameters' {
         It 'should return results' {
             Get-PackageSource |
             Should -Not -BeNullOrEmpty

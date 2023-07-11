@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Save-Package {
     AfterEach {
@@ -38,8 +38,8 @@ Describe Save-Package {
     Context 'with -Prerelease parameter' {
         It 'should save' {
             $savePackageParams = @{
-                Name = 'Microsoft.PowerShell.Archive'
-                Version = '[2.0.0,2.0.1)'
+                Name = 'PSReadLine'
+                Version = '2.0.0-rc2'
                 Prerelease = $true
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
@@ -52,25 +52,18 @@ Describe Save-Package {
     }
 
     Context 'with -Source parameter' {
-        BeforeEach {
+        BeforeAll {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
             New-Item -Path $path/repo -ItemType Directory
-            Save-PSResource -Name AnyPackage, SNMP -Path $path/repo -TrustRepository -AsNupkg
-
-            try {
-                Register-PSResourceRepository -Name Test -Uri $path/repo -Trusted
-            }
-            catch {
-                Write-Verbose -Message 'Test source already exists.'
-            }
+            Register-PSResourceRepository -Name Test -Uri $path/repo -Trusted
+            Save-PSResource -Name PSWindowsUpdate, SNMP -Path $path/repo -TrustRepository -AsNupkg
         }
 
         AfterAll {
             Unregister-PSResourceRepository -Name Test
         }
 
-        It 'should save <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'},
-                                                          @{ Name = 'AnyPackage'; Source = 'Test' } {
+        It 'should save <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery' } {
             $savePackageParams = @{
                 Name = $Name
                 Source = $Source
@@ -86,14 +79,14 @@ Describe Save-Package {
 
     Context 'with -AsNupkg parameter' {
         # Pipeline input fails with -AsNupkg
-        # https://github.com/PowerShell/PowerShellGet/issues/948
+        # https://github.com/PowerShell/PSResourceGet/issues/948
         It 'should save <_> successfully' -TestCases 'AnyPackge' -Skip {
             $savePackageParams = @{
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 AsNupkg = $true
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
             }
 
             Save-Package @savePackageParams |
@@ -103,14 +96,14 @@ Describe Save-Package {
 
     Context 'with -IncludeXml parameter' {
         # Pipeline input fails with -IncludeXml
-        # https://github.com/PowerShell/PowerShellGet/issues/949
+        # https://github.com/PowerShell/PSResourceGet/issues/949
         It 'should save <_> successfully' -TestCases 'AnyPackge' -Skip {
             $savePackageParams = @{
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 IncludeXml = $true
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
             }
 
             Save-Package @savePackageParams |
@@ -124,7 +117,7 @@ Describe Save-Package {
                 Name = $_
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 AuthenticodeCheck = $true
             }
 
@@ -144,7 +137,7 @@ Describe Save-Package {
                 Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 SkipDependencyCheck = $true
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
             }
 
             Save-Package @savePackageParams |
@@ -161,7 +154,7 @@ Describe Save-Package {
                 Name = $_
                 Path = $path
                 PassThru = $true
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 TemporaryPath = "$path/temp"
             }
 

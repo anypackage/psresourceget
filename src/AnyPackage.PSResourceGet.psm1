@@ -3,14 +3,14 @@
 # terms of the MIT license.
 
 using module AnyPackage
-using module PowerShellGet
+using module Microsoft.PowerShell.PSResourceGet
 
 using namespace System.Collections.Generic
 using namespace AnyPackage.Provider
-using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
+using namespace Microsoft.PowerShell.PSResourceGet.UtilClasses
 
-[PackageProvider('PowerShellGet')]
-class PowerShellGetProvider : PackageProvider, IGetPackage, IFindPackage,
+[PackageProvider('PSResourceGet')]
+class PSResourceGetProvider : PackageProvider, IGetPackage, IFindPackage,
 IInstallPackage, ISavePackage, IUninstallPackage,
 IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
     #region GetPackage
@@ -27,7 +27,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         $request.DynamicParameters |
         ConvertTo-Hashtable -Hashtable $params -IsBound
 
-        Get-PSResource @params |
+        Get-InstalledPSResource @params |
         Write-Package -Request $request
     }
     #endregion
@@ -134,11 +134,11 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $uninstallParams -IsBound
 
         # Issue to get PassThru parameter added
-        # https://github.com/PowerShell/PowerShellGet/issues/667
+        # https://github.com/PowerShell/PSResourceGet/issues/667
 
         # Prerelease parameter causes it to silently fail
-        # https://github.com/PowerShell/PowerShellGet/issues/842
-        Get-PSResource @params |
+        # https://github.com/PowerShell/PSResourceGet/issues/842
+        Get-InstalledPSResource @params |
         ForEach-Object {
             try {
                 $_ | Uninstall-PSResource @uninstallParams -ErrorAction Stop
@@ -171,8 +171,8 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
         ConvertTo-Hashtable -Hashtable $updateParams -IsBound
 
         # Find-PSResource pipeline input
-        # https://github.com/PowerShell/PowerShellGet/issues/666
-        Get-PSResource -Name $request.Name -ErrorAction SilentlyContinue |
+        # https://github.com/PowerShell/PSResourceGet/issues/666
+        Get-InstalledPSResource -Name $request.Name -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
         Find-PSResource @params -ErrorAction SilentlyContinue |
         Select-Object -ExpandProperty Name -Unique |
@@ -196,7 +196,7 @@ IUpdatePackage, IPublishPackage, IGetSource, ISetSource {
 
         try {
             # PassThru parameter
-            # https://github.com/PowerShell/PowerShellGet/issues/718
+            # https://github.com/PowerShell/PSResourceGet/issues/718
             Publish-PSResource @params -ErrorAction Stop
 
             $params.Remove('Path')
@@ -359,19 +359,19 @@ class InstallPackageDynamicParameters : InstallUpdateDynamicParameters {
     [switch] $Reinstall
 
     # Install-PSResource -NoClobber fails
-    # https://github.com/PowerShell/PowerShellGet/issues/946
+    # https://github.com/PowerShell/PSResourceGet/issues/946
     # [Parameter()]
     # [switch] $NoClobber
 }
 
 class SavePackageDynamicParameters : InstallDynamicParameters {
     # Pipeline input fails with -AsNupkg
-    # https://github.com/PowerShell/PowerShellGet/issues/948
+    # https://github.com/PowerShell/PSResourceGet/issues/948
     # [Parameter()]
     # [switch] $AsNupkg
 
     # Pipeline input fails with -IncludeXml
-    # https://github.com/PowerShell/PowerShellGet/issues/949
+    # https://github.com/PowerShell/PSResourceGet/issues/949
     # [Parameter()]
     # [switch] $IncludeXml
 }
@@ -403,7 +403,7 @@ class RegisterPackageSourceDynamicParameters : SetPackageSourceDynamicParameters
 }
 
 [guid] $id = 'c9a39544-274b-4935-9cad-7423e8c47e6b'
-[PackageProviderManager]::RegisterProvider($id, [PowerShellGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
+[PackageProviderManager]::RegisterProvider($id, [PSResourceGetProvider], $MyInvocation.MyCommand.ScriptBlock.Module)
 
 $MyInvocation.MyCommand.ScriptBlock.Module.OnRemove = {
     [PackageProviderManager]::UnregisterProvider($id)
@@ -476,7 +476,7 @@ function Get-Latest {
         $resources |
         Group-Object -Property Name |
         ForEach-Object {
-            # PowerShellGet returns the latest as the first object
+            # PSResourceGet returns the latest as the first object
             $_.Group | Select-Object -First 1
         }
     }
@@ -520,7 +520,7 @@ function Write-Package {
     )
 
     begin {
-        $sources = Get-PackageSource -Provider AnyPackage.PowerShellGet\PowerShellGet
+        $sources = Get-PackageSource -Provider AnyPackage.PSResourceGet\PSResourceGet
     }
 
     process {
@@ -537,7 +537,7 @@ function Write-Package {
         Where-Object Name -eq $resource.Repository
 
         # Blank RepositorySourceLocation
-        # https://github.com/PowerShell/PowerShellGet/issues/1052
+        # https://github.com/PowerShell/PSResourceGet/issues/1052
         if (-not $source -and $resource.RepositorySourceLocation) {
             $source = [PackageSourceInfo]::new($resource.Repository, $resource.RepositorySourceLocation, $false, $Request.ProviderInfo)
         }

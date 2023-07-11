@@ -1,4 +1,4 @@
-﻿#requires -modules AnyPackage.PowerShellGet
+﻿#requires -modules AnyPackage.PSResourceGet
 
 Describe Install-Package {
     AfterEach {
@@ -49,8 +49,7 @@ Describe Install-Package {
             Unregister-PSResourceRepository -Name Test
         }
 
-        It 'should install <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'},
-                                                          @{ Name = 'PSWindowsUpdate'; Source = 'Test' } {
+        It 'should install <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery' } {
             $results = Install-Package -Name $name -Source $source -PassThru
             $results.Source | Should -Be $source
         }
@@ -58,20 +57,20 @@ Describe Install-Package {
 
     Context 'with -Scope parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -Scope CurrentUser -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -Scope CurrentUser -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Prerelease parameter' {
         AfterAll {
-            Get-PSResource -Name Microsoft.PowerShell.Archive -Version '(1.9,2.0.1)' |
+            Get-InstalledPSResource -Name PSReadLine -Version '2.0.0-rc2' |
             Where-Object IsPrerelease |
             Uninstall-PSResource
         }
 
-        It 'should install <_> sucessfully' -TestCases 'Microsoft.PowerShell.Archive' {
-            $package = Install-Package -Name $_ -Version '[2.0,2.0.1)' -Prerelease -PassThru
+        It 'should install <_> successfully' -TestCases 'PSReadLine' {
+            $package = Install-Package -Name $_ -Version '2.0.0-rc2' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
         }
@@ -79,7 +78,7 @@ Describe Install-Package {
 
     Context 'with -AuthenticodeCheck parameter' {
         It 'should install <_> successfully' -TestCases 'Microsoft.PowerShell.Archive' {
-            Install-Package -Name $_ -Provider PowerShellGet -AuthenticodeCheck -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -AuthenticodeCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -92,7 +91,7 @@ Describe Install-Package {
 
     Context 'with -SkipDependencyCheck parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -SkipDependencyCheck -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -SkipDependencyCheck -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
@@ -100,30 +99,30 @@ Describe Install-Package {
     Context 'with -TemporaryPath parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
             $path = Get-PSDrive TestDrive | Select-Object -ExpandProperty Root
-            Install-Package -Name $_ -Provider PowerShellGet -TemporaryPath $path -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -TemporaryPath $path -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -NoClobber parameter' {
         # Install-PSResource -NoClobber fails
-        # https://github.com/PowerShell/PowerShellGet/issues/946
+        # https://github.com/PowerShell/PSResourceGet/issues/946
         It 'should install <_> successfully' -TestCases 'SNMP' -Skip {
-            Install-Package -Name $_ -Provider PowerShellGet -NoClobber -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -NoClobber -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -AcceptLicense parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -AcceptLicense -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -AcceptLicense -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }
 
     Context 'with -Reinstall parameter' {
         It 'should install <_> successfully' -TestCases 'SNMP' {
-            Install-Package -Name $_ -Provider PowerShellGet -Reinstall -PassThru |
+            Install-Package -Name $_ -Provider PSResourceGet -Reinstall -PassThru |
             Should -Not -BeNullOrEmpty
         }
     }

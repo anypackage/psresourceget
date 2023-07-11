@@ -1,9 +1,6 @@
-#requires -modules AnyPackage.PowerShellGet
+#requires -modules AnyPackage.PSResourceGet
 
-using module PowerShellGet
-using namespace Microsoft.PowerShell.PowerShellGet.UtilClasses
-
-Describe Register-Package {
+Describe Register-PackageSource {
     AfterEach {
         try {
             Register-PSResourceRepository -PSGallery
@@ -11,10 +8,13 @@ Describe Register-Package {
         catch {
             Write-Verbose -Message 'PSGallery already exists.'
         }
-    }
 
-    AfterEach {
-        Unregister-PSResourceRepository -Name Test -ErrorAction Ignore
+        try {
+            Unregister-PSResourceRepository -Name Test
+        }
+        catch {
+            Write-Verbose -Message 'Test not registered.'
+        }
     }
 
     Context 'with -Uri parameter' {
@@ -24,7 +24,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
             }
 
@@ -41,7 +41,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 Trusted = $true
                 PassThru = $true
             }
@@ -58,7 +58,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 Trusted = $false
                 PassThru = $true
             }
@@ -77,7 +77,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 Priority = $_
             }
@@ -104,7 +104,7 @@ Describe Register-Package {
 
         It 'should register' {
             $registerPackageSourceParams = @{
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 PSGallery = $true
             }
@@ -121,7 +121,7 @@ Describe Register-Package {
             $registerPackageSourceParams = @{
                 Name = 'Test'
                 Location = $path
-                Provider = 'PowerShellGet'
+                Provider = 'PSResourceGet'
                 PassThru = $true
                 CredentialInfo = $_
             }
