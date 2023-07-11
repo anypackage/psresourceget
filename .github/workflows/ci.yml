@@ -45,7 +45,7 @@ jobs:
 
       - name: Install Pester 5.4.0
         run: |
-          Install-Module Pester -RequiredVersion 5.4.0 -AllowClobber -Force
+          Install-PSResource Pester 5.4.0
           Import-Module Pester -RequiredVersion 5.4.0
 
       - name: Download module
