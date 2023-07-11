@@ -127,7 +127,12 @@ jobs:
       - name: Install AnyPackage
         run: Install-Module AnyPackage -Force -AllowClobber
 
+      - name: Install PSResourceGet
+        run: Install-Module Microsoft.PowerShell.PSResourceGet -Force -AllowClobber
+
       - name: Publish Module
         env:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
-        run: Publish-Module -Name AnyPackage.PSResourceGet -NuGetApiKey $env:NUGET_KEY
+        run: |
+          $module = Get-Module AnyPackage.PSResourceGet -ListAvailable
+          Publish-PSResource $module.ModuleBase -NuGetApiKey $env:NUGET_KEY
