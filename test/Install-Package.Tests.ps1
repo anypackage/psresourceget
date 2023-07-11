@@ -49,7 +49,7 @@ Describe Install-Package {
             Unregister-PSResourceRepository -Name Test
         }
 
-        It 'should install <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'},
+        It 'should install <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'}
                                                           <# @{ Name = 'PSWindowsUpdate'; Source = 'Test' } #> {
             $results = Install-Package -Name $name -Source $source -PassThru
             $results.Source | Should -Be $source

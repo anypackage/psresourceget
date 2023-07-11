@@ -63,7 +63,7 @@ Describe Save-Package {
             Unregister-PSResourceRepository -Name Test
         }
 
-        It 'should save <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'},
+        It 'should save <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'}
                                                           <# @{ Name = 'PSWindowsUpdate'; Source = 'Test' } #> {
             $savePackageParams = @{
                 Name = $Name
