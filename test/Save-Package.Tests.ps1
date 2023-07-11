@@ -68,7 +68,7 @@ Describe Save-Package {
             $savePackageParams = @{
                 Name = $Name
                 Source = $Source
-                Path = (Get-PSDrive -Name TestDrive | Select-Object -ExpandProperty Root)
+                Path = (Get-PSDrive -Name Temp | Select-Object -ExpandProperty Root)
                 PassThru = $true
                 TrustSource = $true
             }
