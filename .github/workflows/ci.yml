@@ -128,7 +128,7 @@ jobs:
         run: Install-Module AnyPackage -Force -AllowClobber
 
       - name: Install PSResourceGet
-        run: Install-Module Microsoft.PowerShell.PSResourceGet -Force -AllowClobber
+        run: Install-Module Microsoft.PowerShell.PSResourceGet -Force -AllowClobber -AllowPrerelease
 
       - name: Publish Module
         env:
