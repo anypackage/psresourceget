@@ -43,6 +43,11 @@ jobs:
       - name: Install PSResourceGet
         run: Install-Module Microsoft.PowerShell.PSResourceGet -AllowPrerelease -Force -AllowClobber
 
+      - name: Install Pester 5.4.0
+        run: |
+          Install-Module Pester -RequiredVersion 5.4.0 -AllowClobber -Force
+          Import-Module Pester -RequiredVersion 5.4.0
+
       - name: Download module
         uses: actions/download-artifact@v3
         with:
