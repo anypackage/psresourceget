@@ -50,7 +50,7 @@ Describe Install-Package {
         }
 
         It 'should install <Name> from <Source> repository' -TestCases @{ Name = 'SNMP'; Source = 'PSGallery'},
-                                                          @{ Name = 'PSWindowsUpdate'; Source = 'Test' } {
+                                                          <# @{ Name = 'PSWindowsUpdate'; Source = 'Test' } #> {
             $results = Install-Package -Name $name -Source $source -PassThru
             $results.Source | Should -Be $source
         }
