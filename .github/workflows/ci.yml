@@ -135,4 +135,4 @@ jobs:
           NUGET_KEY: ${{ secrets.NUGET_KEY }}
         run: |
           $module = Get-Module AnyPackage.PSResourceGet -ListAvailable
-          Publish-PSResource $module.ModuleBase -NuGetApiKey $env:NUGET_KEY
+          Publish-PSResource $module.ModuleBase -ApiKey $env:NUGET_KEY
