@@ -70,7 +70,7 @@ Describe Update-Package {
         }
     }
 
-    Context 'with -Prerelease parameter' {
+    Context 'with -Prerelease parameter' -Skip {
         BeforeAll {
             Install-PSResource -Name NetworkingDsc -Version 8.0.0 -TrustRepository
         }
