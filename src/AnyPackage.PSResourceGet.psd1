@@ -7,9 +7,7 @@
     Copyright = '(c) 2023 Thomas Nieto. All rights reserved.'
     Description = 'PSResourceGet provider for AnyPackage.'
     PowerShellVersion = '5.1'
-    RequiredModules = @(
-        @{ ModuleName = 'AnyPackage'; ModuleVersion = '0.5.1' },
-        'Microsoft.PowerShell.PSResourceGet')
+    RequiredModules = @('AnyPackage', 'Microsoft.PowerShell.PSResourceGet')
     FunctionsToExport = @()
     CmdletsToExport = @()
     AliasesToExport = @()

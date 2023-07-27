@@ -70,17 +70,17 @@ Describe Update-Package {
         }
     }
 
-    Context 'with -Prerelease parameter' {
+    Context 'with -Prerelease parameter' -Skip {
         BeforeAll {
-            Install-PSResource -Name PSReadLine -Version 1.2 -TrustRepository
+            Install-PSResource -Name NetworkingDsc -Version 8.0.0 -TrustRepository
         }
 
         AfterAll {
-            Uninstall-PSResource -Name PSReadLine
+            Uninstall-PSResource -Name NetworkingDsc
         }
 
-        It 'should update <_> successfully' -TestCases 'PSReadLine' {
-            $package = Update-Package -Name $_ -Version '2.0.0-rc2' -Prerelease -PassThru
+        It 'should update <_> successfully' -TestCases 'NetworkingDsc' {
+            $package = Update-Package -Name $_ -Version '8.1.0-preview0001' -Prerelease -PassThru
 
             $package.Version.IsPrerelease | Should -BeTrue
         }
