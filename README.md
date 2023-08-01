@@ -1,6 +1,17 @@
 # AnyPackage.PSResourceGet
 
-AnyPackage.PSResourceGet is an AnyPackage provider that facilitates installing PSResourceGet resources from NuGet repositories.
+[![gallery-image]][gallery-site]
+[![build-image]][build-site]
+[![cf-image]][cf-site]
+
+[gallery-image]: https://img.shields.io/powershellgallery/dt/AnyPackage.PSResourceGet
+[build-image]: https://img.shields.io/github/actions/workflow/status/anypackage/psresourceget/ci.yml
+[cf-image]: https://img.shields.io/codefactor/grade/github/anypackage/psresourceget
+[gallery-site]: https://www.powershellgallery.com/packages/AnyPackage.PSResourceGet
+[build-site]: https://github.com/anypackage/psresourceget/actions/workflows/ci.yml
+[cf-site]: https://www.codefactor.io/repository/github/anypackage/psresourceget
+
+`AnyPackage.PSResourceGet` is an AnyPackage provider that facilitates installing PSResourceGet resources from NuGet repositories.
 
 ## Documentation
 
