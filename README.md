@@ -19,20 +19,8 @@ AnyPackage.PSResourceGet documentation is located in [Provider Catalog](https://
 
 ## Install AnyPackage.PSResourceGet
 
-> NOTE! Microsoft.PowerShell.PSResourceGet is required.
-Due to a PSResourceGet issue, prerelease modules cannot be defined as dependencies, so manual installation of PSResourceGet is required.
-
 ```powershell
-# Install Microsoft.PowerShell.PSResourceGet
-Install-Module Microsoft.PowerShell.PSResourceGet -AllowPrerelease -AllowClobber -Force
-
 Install-Module AnyPackage.PSResourceGet
-```
-
-If PSResourceGet is already installed.
-
-```powershell
-Install-PSResource -Name AnyPackage, AnyPackage.PSResourceGet -SkipDependenciesCheck
 ```
 
 ## Import AnyPackage.PSResourceGet
